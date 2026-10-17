@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Gateway — transforme seu banco de dados em API REST | API2Dev</title>
+  <meta name="description" content="Data Gateway é um aplicativo gratuito para Windows que transforma bancos SQL Server, PostgreSQL, MySQL, MariaDB e SQLite em APIs REST seguras, configuradas visualmente, sem programar.">
+  <meta name="theme-color" content="#0b1224">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="canonical" href="https://api2dev.com.br/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Data Gateway — seu banco de dados virando API REST, sem programar">
+  <meta property="og:description" content="Gratuito para Windows. SQL Server, PostgreSQL, MySQL, MariaDB e SQLite. Tokens, permissões, Swagger, logs e auditoria.">
+  <meta property="og:image" content="https://api2dev.com.br/img/prints/01-dashboard.webp">
+  <meta property="og:url" content="https://api2dev.com.br/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <header class="topo" id="topo">
+    <div class="container topo-in">
+      <a href="/" class="marca" aria-label="API2Dev - início">
+        <img src="/img/logotipo.png" alt="" width="38" height="38">
+        <span><b>Data Gateway</b><small>por API2Dev</small></span>
+      </a>
+      <button class="menu-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="menu" class="menu">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#aplicacoes">Aplicações</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#telas">Telas</a>
+        <a href="#primeiros-passos">Primeiros passos</a>
+        <a href="#duvidas">Dúvidas</a>
+        <a href="#download" class="btn btn-sm btn-primario">Baixar grátis</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================================================ HERO -->
+    <section class="hero">
+      <div class="hero-brilho" aria-hidden="true"></div>
+      <div class="container hero-in">
+        <div class="hero-texto">
+          <span class="selo"><span class="ponto"></span> Gratuito · Windows 10/11 · <span data-versao>v1.1.0</span></span>
+          <h1>Seu banco de dados virando <span class="grad">API REST</span> em minutos — sem programar.</h1>
+          <p class="lead">O <b>Data Gateway</b> conecta no banco que você já usa (SQL Server, PostgreSQL, MySQL, MariaDB ou SQLite)
+            e publica APIs seguras, com tokens, permissões, paginação, filtros, documentação Swagger, logs e auditoria —
+            tudo configurado em telas, direto do seu Windows.</p>
+          <div class="hero-acoes">
+            <a href="/download/instalador" class="btn btn-lg btn-primario" data-download="instalador">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+              Baixar instalador
+            </a>
+            <a href="#download" class="btn btn-lg btn-contorno">Ver opções de download</a>
+          </div>
+          <ul class="hero-bancos" aria-label="Bancos suportados">
+            <li>SQL Server</li><li>PostgreSQL</li><li>MySQL</li><li>MariaDB</li><li>SQLite</li>
+          </ul>
+        </div>
+        <div class="hero-imagem">
+          <div class="janela">
+            <div class="janela-barra"><i></i><i></i><i></i><span>Data Gateway</span></div>
+            <img src="/img/prints/01-dashboard.webp" alt="Painel do Data Gateway com status do gateway, conexões, endpoints e requisições" width="1600" height="960">
+          </div>
+          <div class="codigo-flutuante" aria-hidden="true">
+<pre><span class="c-m">GET</span> /api/v1/clientes?cidade=Goiânia
+<span class="c-k">Authorization:</span> Bearer dg_••••••••
+
+<span class="c-p">{</span> <span class="c-k">"success"</span>: <span class="c-v">true</span>,
+  <span class="c-k">"data"</span>: [ … ],
+  <span class="c-k">"pagination"</span>: <span class="c-p">{</span> <span class="c-k">"page"</span>: <span class="c-n">1</span> <span class="c-p">}</span> <span class="c-p">}</span></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ NÚMEROS -->
+    <section class="faixa">
+      <div class="container faixa-in">
+        <div><b>5</b><span>bancos suportados</span></div>
+        <div><b>0</b><span>linhas de código para publicar</span></div>
+        <div><b>100%</b><span>local — seus dados não saem do servidor</span></div>
+        <div><b>R$ 0</b><span>gratuito para baixar e usar</span></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ COMO FUNCIONA -->
+    <section id="como-funciona" class="secao">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Como funciona</span>
+          <h2>Do banco à API publicada em 4 passos</h2>
+          <p>O Data Gateway fica entre os seus aplicativos e o banco de dados. Quem consome a API nunca acessa o banco
+            diretamente: só enxerga as tabelas, campos e operações que você liberou.</p>
+        </header>
+
+        <div class="fluxo" aria-hidden="true">
+          <div class="fluxo-no"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>Apps, sites, ERPs, BI, automações</span></div>
+          <div class="fluxo-seta"><span>HTTPS + token</span></div>
+          <div class="fluxo-no destaque"><img src="/img/logotipo.png" alt=""><span>Data Gateway</span></div>
+          <div class="fluxo-seta"><span>SQL parametrizado</span></div>
+          <div class="fluxo-no"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span>Seu banco de dados</span></div>
+        </div>
+
+        <ol class="passos">
+          <li>
+            <span class="num">1</span>
+            <h3>Conecte o banco</h3>
+            <p>Informe servidor, porta, banco e usuário. Teste a conexão na hora. A senha fica protegida pelo Windows (DPAPI).</p>
+          </li>
+          <li>
+            <span class="num">2</span>
+            <h3>Escolha a tabela</h3>
+            <p>O Data Gateway lê tabelas, colunas, chaves e relacionamentos. Um assistente guia você por campos, filtros e operações.</p>
+          </li>
+          <li>
+            <span class="num">3</span>
+            <h3>Gere um token</h3>
+            <p>Crie tokens por sistema/cliente e defina o que cada um pode fazer: consultar, incluir, alterar, excluir ou enviar arquivos.</p>
+          </li>
+          <li>
+            <span class="num">4</span>
+            <h3>Consuma a API</h3>
+            <p>Use em qualquer linguagem. Teste no próprio app, veja a documentação Swagger gerada e acompanhe logs em tempo real.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================================================ APLICAÇÕES -->
+    <section id="aplicacoes" class="secao secao-alt">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Aplicações</span>
+          <h2>Onde o Data Gateway ajuda no dia a dia</h2>
+          <p>Sempre que um sistema precisa conversar com um banco que já existe — sem reescrever o sistema e sem abrir o banco para a internet.</p>
+        </header>
+        <div class="grade grade-3">
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+            <h3>Aplicativos mobile e web</h3>
+            <p>Dê ao seu app (Flutter, React Native, Android, iOS, React, Angular) acesso a clientes, produtos e pedidos do ERP sem criar um back-end do zero.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/><circle cx="7" cy="7" r="1"/></svg></div>
+            <h3>Integração de ERP legado</h3>
+            <p>Sistemas antigos em Delphi, VB6, Clipper ou Access passam a falar REST/JSON. Integre com e-commerce, marketplaces e parceiros.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+            <h3>BI, Power BI e planilhas</h3>
+            <p>Alimente Power BI, Excel (Power Query), Google Sheets e dashboards via API com usuário somente-leitura e consultas prontas.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M9 6h5a4 4 0 0 1 4 4v5"/></svg></div>
+            <h3>Automações (n8n, Make, Zapier)</h3>
+            <p>Conecte o banco a fluxos de automação: envie mensagens, gere cobranças, sincronize cadastros e dispare rotinas por HTTP.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+            <h3>Portal do cliente</h3>
+            <p>Publique só o necessário — 2ª via, pedidos, status de serviço — com consultas parametrizadas e tokens específicos para o portal.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.8-.7-.7-2.8z"/></svg></div>
+            <h3>Ferramentas internas e low-code</h3>
+            <p>Retool, Appsmith, Budibase, AppSheet e afins consomem a API com CRUD completo, filtros, ordenação e paginação prontos.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><path d="M21 15V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10"/><path d="m16 19 2 2 4-4"/></svg></div>
+            <h3>Upload de documentos e fotos</h3>
+            <p>Anexe arquivos a registros (fotos de produtos, comprovantes, laudos) com extensões permitidas, limite de tamanho e nomes seguros.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg></div>
+            <h3>Relatórios e consultas específicas</h3>
+            <p>Monte SELECTs com JOINs, agrupamentos e totais no editor ou no diagrama visual e publique como <code>GET</code> com parâmetros.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone"><svg viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="4"/></svg></div>
+            <h3>Prototipagem e homologação</h3>
+            <p>Suba uma API em minutos para validar uma ideia, testar um front-end ou demonstrar uma integração a um cliente.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ RECURSOS -->
+    <section id="recursos" class="secao">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Recursos</span>
+          <h2>Tudo o que uma API profissional precisa</h2>
+        </header>
+        <div class="recursos">
+          <div class="recurso"><h3>CRUD completo</h3><p>GET, GET por ID, POST, PUT, PATCH e DELETE (físico ou lógico), cada operação liberada individualmente.</p></div>
+          <div class="recurso"><h3>Filtros e ordenação</h3><p>Igual, diferente, maior/menor, contém, começa com, termina com, em lista e nulo — só nos campos que você permitir.</p></div>
+          <div class="recurso"><h3>Paginação obrigatória</h3><p>Página e tamanho com limite máximo por endpoint e total de registros opcional.</p></div>
+          <div class="recurso"><h3>Relacionamentos</h3><p>Traga dados relacionados com <code>?expand=</code> a partir das chaves estrangeiras.</p></div>
+          <div class="recurso"><h3>Consultas SQL</h3><p>Editor SQL e montador visual (diagrama), teste com parâmetros e publicação como GET somente leitura.</p></div>
+          <div class="recurso"><h3>Tokens e permissões</h3><p>Token por sistema, validade, permissões por endpoint e operação. Armazenados apenas como hash.</p></div>
+          <div class="recurso"><h3>Documentação automática</h3><p>OpenAPI 3 e Swagger UI geradas a partir da configuração, sempre atualizadas.</p></div>
+          <div class="recurso"><h3>Testador de API</h3><p>Monte requisições, veja status, tempo e JSON de resposta sem sair do aplicativo.</p></div>
+          <div class="recurso"><h3>Logs e auditoria</h3><p>Requisições, tempos e erros; auditoria de login, configuração, tokens e alterações de dados.</p></div>
+          <div class="recurso"><h3>Dashboard e barra de status</h3><p>Gateway online, conexões, requisições do dia, erros e tempo médio de resposta.</p></div>
+          <div class="recurso"><h3>Backup e importação</h3><p>Exporte toda a configuração em um arquivo e restaure em outro computador.</p></div>
+          <div class="recurso"><h3>Roda na bandeja</h3><p>Inicia com o Windows, fica na bandeja do sistema e mantém a API no ar em segundo plano.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SEGURANÇA -->
+    <section id="seguranca" class="secao secao-escura">
+      <div class="container seg-in">
+        <div>
+          <span class="sobretitulo">Segurança</span>
+          <h2>Seu banco continua fechado. A API só faz o que você liberou.</h2>
+          <p>O Data Gateway não executa SQL enviado por quem chama a API. Tabelas, campos, filtros e ordenações vêm de uma lista
+            autorizada e todo valor recebido vira parâmetro.</p>
+          <a href="#download" class="btn btn-primario">Baixar agora</a>
+        </div>
+        <ul class="lista-check">
+          <li>Whitelist de tabelas, campos, operadores e ordenações</li>
+          <li>Consultas 100% parametrizadas (sem SQL injection)</li>
+          <li>Token apenas no cabeçalho <code>Authorization: Bearer</code></li>
+          <li>Rate limit por token e timeout de consultas</li>
+          <li>Senhas do painel com scrypt; tokens guardados como SHA-256</li>
+          <li>Senhas do banco protegidas pelo Windows (DPAPI)</li>
+          <li>Consultas SQL publicadas em modo somente leitura</li>
+          <li>Erros sem stack trace nem mensagens internas do banco</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ TELAS -->
+    <section id="telas" class="secao">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Telas</span>
+          <h2>Veja o Data Gateway por dentro</h2>
+          <p>Clique para ampliar.</p>
+        </header>
+        <div class="galeria">
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/03-conexao-teste.webp" alt="Cadastro e teste de conexão com o banco" width="1600" height="960"></button><figcaption>Conexão e teste com o banco</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/05-wizard-campos.webp" alt="Assistente: configuração dos campos" width="1600" height="960"></button><figcaption>Assistente — campos da API</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/06-wizard-filtros.webp" alt="Assistente: filtros e paginação" width="1600" height="960"></button><figcaption>Assistente — filtros e paginação</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/07-wizard-revisar.webp" alt="Assistente: revisão antes de publicar" width="1600" height="960"></button><figcaption>Revisão antes de publicar</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/04-endpoints.webp" alt="Lista de endpoints publicados" width="1600" height="960"></button><figcaption>Endpoints publicados</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/09-permissoes.webp" alt="Permissões por token" width="1600" height="960"></button><figcaption>Permissões por token</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/17-consulta-diagrama.webp" alt="Montador visual de consultas SQL" width="1600" height="1000"></button><figcaption>Consultas SQL — diagrama visual</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/18-consulta-sql.webp" alt="Editor SQL com parâmetros e resultado" width="1600" height="1000"></button><figcaption>Consultas SQL — editor e resultado</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/10-testador.webp" alt="Testador de API" width="1600" height="960"></button><figcaption>Testador de API</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/16-swagger.webp" alt="Documentação Swagger gerada" width="1600" height="960"></button><figcaption>Documentação Swagger</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/12-logs.webp" alt="Logs de requisições" width="1600" height="960"></button><figcaption>Logs de requisições</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/13-auditoria.webp" alt="Auditoria" width="1600" height="960"></button><figcaption>Auditoria</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ PRIMEIROS PASSOS -->
+    <section id="primeiros-passos" class="secao secao-alt">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Primeiros passos</span>
+          <h2>Como usar</h2>
+        </header>
+        <div class="guia">
+          <ol class="guia-lista">
+            <li><b>Instale ou abra o portátil.</b> No primeiro acesso, crie o usuário administrador do painel.</li>
+            <li><b>Conexões → Bancos → Novo.</b> Escolha o tipo do banco, informe servidor, porta, banco, usuário e senha e clique em <i>Testar</i>.
+              Para consultas e relatórios, prefira um usuário de banco só com leitura.</li>
+            <li><b>APIs → Endpoints → Nova API.</b> O assistente mostra as tabelas. Escolha a tabela, o endereço (ex.: <code>clientes</code>),
+              os campos, quais filtros e ordenações são permitidos, a paginação e as operações (consultar, incluir, alterar, excluir).</li>
+            <li><b>APIs → Tokens.</b> Gere um token para cada sistema que vai consumir a API e marque as permissões. Copie o token: ele é exibido uma única vez.</li>
+            <li><b>Teste.</b> Use o <i>Testador de API</i> ou abra a <i>Documentação</i> (Swagger). A API responde em <code>http://SEU-PC:8787/api/v1/…</code>
+              (porta configurável em <i>Sistema → Configurações</i>).</li>
+            <li><b>Publique na rede ou na internet.</b> Libere a porta no firewall para uso na rede local, ou coloque um proxy com HTTPS
+              (Caddy, Nginx, IIS) na frente para acesso externo.</li>
+          </ol>
+
+          <div class="exemplos">
+            <div class="abas" role="tablist">
+              <button role="tab" aria-selected="true" data-aba="curl">cURL</button>
+              <button role="tab" aria-selected="false" data-aba="js">JavaScript</button>
+              <button role="tab" aria-selected="false" data-aba="sql">Consulta SQL</button>
+            </div>
+<pre class="aba ativa" data-painel="curl"><code><span class="c-c"># Clientes de Goiânia, 20 por página, ordenados pelo nome</span>
+curl -G "http://localhost:8787/api/v1/clientes" \
+  --data-urlencode "cidade=Goiânia" -d sort=nome -d pageSize=20 \
+  -H "Authorization: Bearer SEU_TOKEN"
+
+<span class="c-c"># Inclui um cliente</span>
+curl -X POST "http://localhost:8787/api/v1/clientes" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Maria Silva","cidade":"Goiânia"}'</code></pre>
+<pre class="aba" data-painel="js"><code><span class="c-k">const</span> resp = <span class="c-k">await</span> fetch(<span class="c-v">'http://localhost:8787/api/v1/pedidos/1520?expand=itens'</span>, {
+  headers: { Authorization: <span class="c-v">'Bearer '</span> + token }
+});
+<span class="c-k">const</span> { success, data, error } = <span class="c-k">await</span> resp.json();
+
+<span class="c-k">if</span> (!success) console.error(error.code, error.message);
+<span class="c-k">else</span> console.log(data.cliente, data.itens.length);</code></pre>
+<pre class="aba" data-painel="sql"><code><span class="c-c">-- Escrita no app (APIs → Consultas SQL) e publicada como GET</span>
+<span class="c-k">SELECT</span> c.CODIGO, c.NOME, <span class="c-k">SUM</span>(p.TOTAL) <span class="c-k">AS</span> TOTAL_COMPRADO
+<span class="c-k">FROM</span> CLIENTES c
+<span class="c-k">INNER JOIN</span> PEDIDOS p <span class="c-k">ON</span> p.CLIENTE = c.CODIGO
+<span class="c-k">WHERE</span> p.DATA &gt;= <span class="c-v">:desde</span>
+<span class="c-k">GROUP BY</span> c.CODIGO, c.NOME
+
+<span class="c-c">-- Chamada:</span>
+GET /api/v1/consultas/vendas-por-cliente?desde=2026-01-01</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ DOWNLOAD -->
+    <section id="download" class="secao secao-download">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Download gratuito</span>
+          <h2>Baixe o Data Gateway <span data-versao>v1.1.0</span></h2>
+          <p>Para Windows 10 e 11 (64 bits). Não precisa instalar Node.js, banco ou qualquer outro programa.</p>
+        </header>
+        <div class="downloads">
+          <article class="dl" data-tipo="instalador">
+            <span class="dl-tag">Recomendado</span>
+            <h3>Instalador</h3>
+            <p>Cria atalhos no menu Iniciar e na área de trabalho, permite escolher a pasta e inclui desinstalador.</p>
+            <ul class="dl-info">
+              <li><span>Arquivo</span><b data-campo="nome">DataGateway-Setup.exe</b></li>
+              <li><span>Tamanho</span><b data-campo="tamanho">~105 MB</b></li>
+            </ul>
+            <a class="btn btn-lg btn-primario btn-bloco" href="/download/instalador">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+              Baixar instalador
+            </a>
+            <details class="dl-hash"><summary>SHA-256</summary><code data-campo="sha256">—</code></details>
+          </article>
+          <article class="dl" data-tipo="portatil">
+            <h3>Portátil</h3>
+            <p>Um único executável, sem instalação. Ideal para pen drive, testes rápidos ou máquinas sem permissão de instalar.</p>
+            <ul class="dl-info">
+              <li><span>Arquivo</span><b data-campo="nome">DataGateway-Portable.exe</b></li>
+              <li><span>Tamanho</span><b data-campo="tamanho">~105 MB</b></li>
+            </ul>
+            <a class="btn btn-lg btn-contorno btn-bloco" href="/download/portatil">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+              Baixar portátil
+            </a>
+            <details class="dl-hash"><summary>SHA-256</summary><code data-campo="sha256">—</code></details>
+          </article>
+        </div>
+        <div class="aviso">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+          <p><b>Aviso do Windows SmartScreen:</b> o executável ainda não tem assinatura digital, então o Windows pode mostrar
+            “O Windows protegeu o computador”. Clique em <b>Mais informações → Executar assim mesmo</b>.
+            Se quiser, confira o arquivo com o SHA-256 acima (PowerShell: <code>Get-FileHash .\arquivo.exe</code>).</p>
+        </div>
+        <p class="requisitos"><b>Requisitos:</b> Windows 10 ou 11 64 bits · 4 GB de RAM · 300 MB livres em disco ·
+          acesso de rede ao servidor do banco de dados.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ DÚVIDAS -->
+    <section id="duvidas" class="secao secao-alt">
+      <div class="container estreito">
+        <header class="secao-cab">
+          <span class="sobretitulo">Dúvidas frequentes</span>
+          <h2>Perguntas e respostas</h2>
+        </header>
+        <div class="faq">
+          <details><summary>É gratuito mesmo?</summary><p>Sim. O Data Gateway pode ser baixado e usado gratuitamente, inclusive em empresas. Não há limite de endpoints, tokens ou requisições.</p></details>
+          <details><summary>Preciso saber programar?</summary><p>Não para publicar a API: tudo é feito em telas. Para <i>consumir</i> a API você usa a ferramenta de sua preferência (app, site, Power BI, n8n etc.). Conhecer SQL ajuda apenas no recurso opcional de Consultas SQL.</p></details>
+          <details><summary>Meus dados passam por algum servidor da API2Dev?</summary><p>Não. O Data Gateway roda no seu computador ou servidor e conversa diretamente com o seu banco. Configurações ficam em um banco SQLite local, em <code>%APPDATA%\Data Gateway</code>.</p></details>
+          <details><summary>Quais bancos são suportados?</summary><p>Microsoft SQL Server, PostgreSQL, MySQL, MariaDB e SQLite. É possível ter várias conexões ao mesmo tempo, inclusive de tipos diferentes.</p></details>
+          <details><summary>Posso alterar a estrutura do meu banco com ele?</summary><p>Não. O Data Gateway não cria nem altera tabelas no seu banco. Ele só lê a estrutura e executa as operações de dados que você liberar em cada endpoint.</p></details>
+          <details><summary>Como acesso a API de fora da minha rede?</summary><p>Coloque um proxy reverso com HTTPS (Caddy, Nginx ou IIS) apontando para a porta do Data Gateway (padrão 8787) e use um domínio. Não exponha a porta do banco de dados.</p></details>
+          <details><summary>Ele precisa ficar aberto?</summary><p>Ele fica na bandeja do Windows e pode iniciar junto com o sistema. Com a opção de minimizar para a bandeja ativa, fechar a janela não derruba a API; para encerrar, use <i>Sair</i> no ícone da bandeja.</p></details>
+          <details><summary>Como atualizo para uma versão nova?</summary><p>Baixe o novo instalador e execute por cima — as configurações são mantidas. No portátil, basta substituir o executável. Recomenda-se exportar um backup antes (Sistema → Configurações).</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ CONTATO -->
+    <section id="contato" class="secao contato">
+      <div class="container contato-in">
+        <img src="/img/logotipo.png" alt="API2Dev" width="120" height="120">
+        <div>
+          <h2>Feito pela API2Dev</h2>
+          <p>Desenvolvido por <b>Hendell Alves Cardoso</b>. Precisa de ajuda para integrar, publicar na internet ou de uma solução sob medida? Fale com a gente.</p>
+          <div class="contato-links">
+            <a class="btn btn-contorno" href="mailto:suporte@api2dev.com.br">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              suporte@api2dev.com.br
+            </a>
+            <a class="btn btn-whats" href="https://wa.me/5562993148955?text=Ol%C3%A1!%20Vim%20pelo%20site%20do%20Data%20Gateway." target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11 11 0 0 0 3.2 17.2L2 22l4.9-1.3A11 11 0 0 0 20.5 3.5zM12 20a8 8 0 0 1-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8.9-.3.2-.5 0a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.7-1.8c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3z"/></svg>
+              (62) 9.9314-8955
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="container rodape-in">
+      <span>© <span data-ano>2026</span> API2Dev · Hendell Alves Cardoso</span>
+      <span><a href="#topo">Voltar ao topo ↑</a></span>
+    </div>
+  </footer>
+
+  <div class="zoom" hidden>
+    <button type="button" class="zoom-fechar" aria-label="Fechar">×</button>
+    <img alt="">
+    <p class="zoom-legenda"></p>
+  </div>
+
+  <script src="/js/site.js" defer></script>
+</body>
+</html>

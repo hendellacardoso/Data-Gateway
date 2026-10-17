@@ -7,3 +7,10 @@ release/
 *.db-shm
 master.key
 .env
+
+# site de download
+site/downloads/
+site/dados/
+site/logs/
+site/caddy/
+site/deploy/tools/

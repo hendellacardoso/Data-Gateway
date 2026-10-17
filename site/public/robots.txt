@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /download/
+Sitemap: https://api2dev.com.br/sitemap.xml

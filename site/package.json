@@ -1,0 +1,12 @@
+{
+  "name": "data-gateway-site",
+  "version": "1.0.0",
+  "description": "Site de download do Data Gateway (api2dev.com.br). Servidor sem dependências, porta 5010.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": { "node": ">=18" },
+  "author": "Hendell Alves Cardoso <suporte@api2dev.com.br>"
+}
