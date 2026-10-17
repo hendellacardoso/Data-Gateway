@@ -7,6 +7,48 @@ Aplicativo desktop (Windows) que transforma tabelas de bancos de dados existente
 
 ---
 
+## Capturas de tela
+
+![Dashboard](docs/screenshots/01-dashboard.png)
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/03-conexao-teste.png" alt="Cadastro e teste de conexão"><br><sub><b>Conexões</b> — cadastro e teste de conexão</sub></td>
+    <td width="50%"><img src="docs/screenshots/05-wizard-campos.png" alt="Assistente de criação de API"><br><sub><b>Assistente</b> — configuração dos campos (tipo físico × tipo lógico)</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/06-wizard-filtros.png" alt="Filtros e paginação"><br><sub><b>Assistente</b> — consulta, paginação e filtros permitidos</sub></td>
+    <td><img src="docs/screenshots/07-wizard-revisar.png" alt="Revisão da API"><br><sub><b>Assistente</b> — revisão antes de publicar</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/04-endpoints.png" alt="Endpoints"><br><sub><b>Endpoints</b> publicados</sub></td>
+    <td><img src="docs/screenshots/09-permissoes.png" alt="Permissões por token"><br><sub><b>Tokens</b> — permissões por endpoint e operação</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/10-testador.png" alt="Testador de API"><br><sub><b>Testador de API</b> com relacionamento (<code>?expand=</code>)</sub></td>
+    <td><img src="docs/screenshots/16-swagger.png" alt="Swagger UI"><br><sub><b>Documentação</b> OpenAPI 3 / Swagger UI gerada automaticamente</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/12-logs.png" alt="Logs"><br><sub><b>Logs</b> de requisições</sub></td>
+    <td><img src="docs/screenshots/13-auditoria.png" alt="Auditoria"><br><sub><b>Auditoria</b> do painel e da API</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/14-configuracoes.png" alt="Configurações"><br><sub><b>Configurações</b> do servidor da API</sub></td>
+    <td><img src="docs/screenshots/15-sobre.png" alt="Sobre"><br><sub><b>Sobre</b></sub></td>
+  </tr>
+</table>
+
+## Download
+
+Baixe o instalador na página de **[Releases](https://github.com/hendellacardoso/api-gateway-desktop/releases)**:
+
+- `DataGateway-Setup-<versão>.exe` — instalador (atalhos, desinstalador, escolha da pasta).
+- `DataGateway-Portable-<versão>.exe` — executável portátil, sem instalação.
+
+> Os executáveis não são assinados digitalmente: o Windows SmartScreen pode exibir “O Windows protegeu o computador”. Clique em **Mais informações → Executar assim mesmo**.
+
+---
+
 ## Como executar
 
 Pré-requisitos: **Node.js 20 ou 22** (LTS) no Windows.
@@ -26,11 +68,16 @@ e faz o `push` para a branch `main`. `node_modules`, `dist`, `release` e bancos 
 
 ### Gerar o instalador (.exe)
 
-```bash
-npm run dist
-```
+Dê dois cliques em `gerar-instalador.bat` (ou rode `npm run dist`). São gerados em `release/`:
 
-Gera `release/Data Gateway Setup 1.0.0.exe` (NSIS): instala o aplicativo, cria atalhos (Área de Trabalho e Menu Iniciar), permite escolher a pasta e cria o desinstalador.
+- `DataGateway-Setup-1.0.0.exe` — instalador NSIS
+- `DataGateway-Portable-1.0.0.exe` — executável portátil
+- `win-unpacked/Data Gateway.exe` — aplicativo descompactado
+
+Os executáveis (~100 MB) **não vão para o Git** (limite de 100 MB por arquivo do GitHub; a pasta `release/` está no `.gitignore`).
+Para distribuir, publique-os em **GitHub → Releases → Draft a new release** e anexe os `.exe`.
+
+O instalador (NSIS): instala o aplicativo, cria atalhos (Área de Trabalho e Menu Iniciar), permite escolher a pasta e cria o desinstalador.
 O diretório de dados é criado no primeiro uso em `%APPDATA%\Data Gateway` (banco interno, chave mestra e uploads).
 A opção **Iniciar com Windows** é controlada pelo próprio app (Tray ou Configurações) e abre o Gateway minimizado (`--hidden`).
 
