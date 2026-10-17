@@ -89,6 +89,20 @@ for (const T of TARGETS) test(`${T.label} ponta a ponta`, { skip: !T.enabled && 
     assert.strictEqual(del.status, 200);
     const fk = await call('DELETE', '/api/v1/clientes/1');
     assert.strictEqual(fk.status, 409, 'violação de FK vira CONFLICT');
+
+    // Consultas SQL personalizadas
+    const q = T.form.tipo === 'postgres'
+      ? 'SELECT c.id, c.nome, COUNT(e.id) AS enderecos FROM vendas.clientes c LEFT JOIN vendas.cliente_endereco e ON e.cliente_id = c.id WHERE c.id >= :desde AND (:nome IS NULL OR c.nome ILIKE :nome) GROUP BY c.id, c.nome ORDER BY c.id'
+      : 'SELECT c.id, c.nome, COUNT(e.id) AS enderecos FROM clientes c LEFT JOIN cliente_endereco e ON e.cliente_id = c.id WHERE c.id >= :desde AND (:nome IS NULL OR c.nome LIKE :nome) GROUP BY c.id, c.nome ORDER BY c.id';
+    const ex = await A['consultas.executar'].fn({ bancoId, sql: q, parametros: [{ nome: 'desde', tipo: 'INTEIRO' }], valores: { desde: '1', nome: '%Silva%' }, limite: 10 }, s);
+    assert.strictEqual(ex.data.length, 1, JSON.stringify(ex));
+    assert.strictEqual(Number(ex.data[0].enderecos), 1);
+    assert.strictEqual(ex.pagination.total, 1);
+    const drv = await ctx.connections.getDriver(bancoId);
+    const tbl = T.form.tipo === 'postgres' ? 'vendas.cliente_endereco' : 'cliente_endereco';
+    await assert.rejects(() => drv.queryReadOnly(`DELETE FROM ${tbl}`, []), /read.only|READ ONLY/i, 'transação somente leitura');
+    const still = await drv.query(`SELECT COUNT(*) AS n FROM ${tbl}`);
+    assert.strictEqual(Number(still[0].n), 1);
   } finally {
     await server.stop();
     await ctx.close();

@@ -10,7 +10,7 @@ const { sendError } = require('../middleware/common');
  * publicada (whitelist). Endpoints/operações não configurados retornam 404/405.
  */
 function createApiRouter(ctx) {
-  const { metadata, tokenAuth, crud, uploads, logger } = ctx;
+  const { metadata, tokenAuth, crud, uploads, logger, consultas, consultaService } = ctx;
   const router = express.Router();
 
   const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((err) => sendError(res, err));
@@ -54,6 +54,26 @@ function createApiRouter(ctx) {
   function audit(req, token, acao, ep, id, detalhes) {
     logger.audit({ origem: 'API', usuario: token.nome, acao, entidade: ep.slug, entidadeId: id, detalhes, ip: req.ip });
   }
+
+  // ---------- Consultas SQL personalizadas (somente leitura) ----------
+  router.all('/consultas/:cslug', wrap(async (req, res) => {
+    const token = authenticate(req, res);
+    const c = consultas.loadRuntime(String(req.params.cslug).toLowerCase());
+    if (!c || !c.publicado || !c.ativo) throw new GatewayError('NOT_FOUND', 'Consulta não encontrada.');
+    res.locals.gw.banco = c.banco.nome;
+    res.locals.gw.tabela = 'consulta:' + c.slug;
+    res.locals.gw.operacao = 'CONSULTA_SQL';
+    if (req.method !== 'GET') {
+      const err = new GatewayError('METHOD_NOT_ALLOWED', 'Consultas aceitam somente GET.');
+      err.allow = 'GET';
+      throw err;
+    }
+    tokenAuth.requireConsulta(token, c.id);
+    const values = consultaService.resolveValues(c, req.query, true);
+    const pg = consultaService.parsePage(c, req.query);
+    const r = await consultaService.execute(c, values, pg);
+    return res.json({ success: true, data: r.data, pagination: r.pagination });
+  }));
 
   // ---------- Coleção ----------
   router.all('/:slug', wrap(async (req, res) => {

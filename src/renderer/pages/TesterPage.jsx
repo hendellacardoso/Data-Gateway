@@ -23,7 +23,11 @@ export default function TesterPage() {
   const [busy, setBusy] = useState(false);
   const [endpoints, setEndpoints] = useState([]);
 
-  useEffect(() => { call('endpoints.list').then(setEndpoints).catch(() => {}); }, []);
+  const [consultas, setConsultas] = useState([]);
+  useEffect(() => {
+    call('endpoints.list').then(setEndpoints).catch(() => {});
+    call('consultas.list').then(setConsultas).catch(() => {});
+  }, []);
 
   const send = async () => {
     setBusy(true);
@@ -54,8 +58,17 @@ export default function TesterPage() {
             <button className={'tab' + (mode === 'upload' ? ' active' : '')} onClick={() => setMode('upload')}>Upload</button>
           </div>}>
           <Field label="Endpoint publicado (atalho)">
-            <Select value="" placeholder="Escolha para preencher a URL…" options={endpoints.filter((e) => e.publicado).map((e) => ({ value: e.slug, label: `/api/v1/${e.slug}` }))}
-              onChange={(e) => e.target.value && setUrl(`${base}/api/v1/${e.target.value}${mode === 'upload' ? '/1/arquivos' : ''}`)} />
+            <Select value="" placeholder="Escolha para preencher a URL…"
+              options={[
+                ...endpoints.filter((e) => e.publicado).map((e) => ({ value: e.slug, label: `/api/v1/${e.slug}` })),
+                ...consultas.filter((c) => c.publicado).map((c) => ({ value: 'consultas/' + c.slug, label: `/api/v1/consultas/${c.slug}  (consulta SQL)` }))
+              ]}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (!v) return;
+                if (v.startsWith('consultas/')) { setMethod('GET'); setMode('json'); setUrl(`${base}/api/v1/${v}`); return; }
+                setUrl(`${base}/api/v1/${v}${mode === 'upload' ? '/1/arquivos' : ''}`);
+              }} />
           </Field>
           <div className="form-row" style={{ gridTemplateColumns: mode === 'json' ? '120px 1fr' : '1fr' }}>
             {mode === 'json' && <Field label="Método"><Select value={method} onChange={(e) => setMethod(e.target.value)} options={METHODS} /></Field>}

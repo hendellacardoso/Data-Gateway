@@ -4,6 +4,7 @@ const { createAuthAdmin } = require('./authAdmin');
 const { createBancosAdmin } = require('./bancosAdmin');
 const { createApiAdmin } = require('./apiAdmin');
 const { createSystemAdmin } = require('./systemAdmin');
+const { createConsultasAdmin } = require('./consultasAdmin');
 const { GatewayError } = require('../errors');
 
 const ALLOWED_TEST_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
@@ -20,6 +21,7 @@ function createAdmin(ctx, hooks = {}) {
   const bancos = createBancosAdmin(ctx);
   const api = createApiAdmin(ctx);
   const sys = createSystemAdmin(ctx, hooks);
+  const cons = createConsultasAdmin(ctx);
 
   /** Testador de API: executa a requisição a partir do processo principal (sem CORS, sem expor Node ao renderer). */
   async function sendTestRequest({ method, url, token, body, files }) {
@@ -106,6 +108,16 @@ function createAdmin(ctx, hooks = {}) {
     'relationships.tables': priv(() => api.configuredTables()),
     'relationships.save': priv((p, s) => api.saveRelationship(s, p)),
     'relationships.delete': priv((p, s) => api.deleteRelationship(s, p)),
+
+    'consultas.list': priv(() => cons.list()),
+    'consultas.get': priv((p) => cons.get(p)),
+    'consultas.analisar': priv((p) => cons.analisar(p)),
+    'consultas.executar': priv((p, s) => cons.executar(s, p)),
+    'consultas.save': priv((p, s) => cons.save(s, p)),
+    'consultas.publish': priv((p, s) => cons.publish(s, p)),
+    'consultas.delete': priv((p, s) => cons.remove(s, p)),
+    'consultas.tokenPermissions': priv((p) => cons.tokenPermissions(p)),
+    'consultas.saveTokenPermissions': priv((p, s) => cons.saveTokenPermissions(s, p)),
 
     'files.list': priv((p) => api.listFiles(p)),
 

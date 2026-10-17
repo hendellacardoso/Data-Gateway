@@ -26,19 +26,26 @@ class TokenAuth {
         listar: !!p.LISTAR, buscar: !!p.BUSCAR, incluir: !!p.INCLUIR, alterar: !!p.ALTERAR, excluir: !!p.EXCLUIR, upload: !!p.UPLOAD
       });
     }
+    const consultas = new Set(this.db.prepare('SELECT CONSULTA_ID FROM GW_TOKEN_PERMISSAO_CONSULTA WHERE TOKEN_ID = ?').all(row.ID).map((r) => r.CONSULTA_ID));
     // Atualiza "último uso" no máximo uma vez por minuto por token
     const now = Date.now();
     if ((this.lastUseWrite.get(row.ID) || 0) < now - 60000) {
       this.lastUseWrite.set(row.ID, now);
       this.db.prepare('UPDATE GW_TOKEN SET ULTIMO_USO = ? WHERE ID = ?').run(new Date(now).toISOString(), row.ID);
     }
-    return { id: row.ID, nome: row.NOME, perms };
+    return { id: row.ID, nome: row.NOME, perms, consultas };
   }
 
   can(token, endpointId, op) {
     if (!token || !OPS.includes(op)) return false;
     const p = token.perms.get(endpointId);
     return !!(p && p[op]);
+  }
+
+  requireConsulta(token, consultaId) {
+    if (!token || !token.consultas || !token.consultas.has(consultaId)) {
+      throw new GatewayError('AUTHORIZATION_ERROR', 'Token sem permissão para esta consulta.');
+    }
   }
 
   require(token, endpointId, op) {

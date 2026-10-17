@@ -24,7 +24,9 @@ class SqliteDriver extends DatabaseDriver {
 
   async disconnect() {
     if (this.db) this.db.close();
+    if (this.roDb) this.roDb.close();
     this.db = null;
+    this.roDb = null;
     this.connected = false;
   }
 
@@ -43,6 +45,18 @@ class SqliteDriver extends DatabaseDriver {
     }
     const info = stmt.run(...p);
     return { rows: [], rowsAffected: info.changes, insertId: info.lastInsertRowid !== undefined ? Number(info.lastInsertRowid) : null };
+  }
+
+  /** SQLite: conexão separada aberta em modo somente leitura; aceita apenas comandos que retornam linhas. */
+  async queryReadOnly(sql, params) {
+    if (!this.roDb) {
+      const Database = require('better-sqlite3');
+      this.roDb = new Database(this.config.file, { readonly: true, fileMustExist: true, timeout: this.config.timeout || 15000 });
+    }
+    const stmt = this.roDb.prepare(sql);
+    if (!stmt.reader) throw new Error('Somente comandos de leitura são permitidos.');
+    const rows = stmt.all(...(params || []).map(toSqliteValue));
+    return { rows, columns: stmt.columns().map((c) => c.name) };
   }
 
   async getServerVersion() {

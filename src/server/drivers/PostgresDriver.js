@@ -52,6 +52,20 @@ class PostgresDriver extends DatabaseDriver {
     return { rows: r.rows || [], rowsAffected: r.rowCount || 0, insertId: null };
   }
 
+  /** PostgreSQL: transação READ ONLY (o banco recusa qualquer escrita) e ROLLBACK ao final. */
+  async queryReadOnly(sql, params) {
+    await this.connect();
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN TRANSACTION READ ONLY');
+      const r = await client.query(sql, params || []);
+      return { rows: r.rows, columns: (r.fields || []).map((f) => f.name) };
+    } finally {
+      await client.query('ROLLBACK').catch(() => {});
+      client.release();
+    }
+  }
+
   async getServerVersion() {
     const r = await this.query('SELECT version() AS v');
     return r[0] && String(r[0].v).split(',')[0];

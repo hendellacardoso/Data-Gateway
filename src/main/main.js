@@ -1,6 +1,15 @@
 'use strict';
 
+const path = require('path');
 const { app, safeStorage, shell, dialog } = require('electron');
+
+// Desenvolvimento usa uma pasta de dados separada da versão instalada/portátil,
+// para que testes não criem usuários, conexões e tokens no ambiente real.
+//   Produção:        %APPDATA%\Data Gateway
+//   Desenvolvimento: %APPDATA%\Data Gateway (Dev)
+if (!app.isPackaged) {
+  app.setPath('userData', path.join(app.getPath('appData'), 'Data Gateway (Dev)'));
+}
 
 if (!process.env.NODE_ENV) process.env.NODE_ENV = app.isPackaged ? 'production' : 'development';
 

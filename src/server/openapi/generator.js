@@ -28,7 +28,7 @@ function schemaName(slug) {
 
 const errorRef = (desc) => ({ description: desc, content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } });
 
-function buildOpenApi(endpoints, { serverUrl, version = '1.0.0' }) {
+function buildOpenApi(endpoints, { serverUrl, version = '1.0.0', consultas = [] }) {
   const paths = {};
   const schemas = {
     Error: {
@@ -159,6 +159,45 @@ function buildOpenApi(endpoints, { serverUrl, version = '1.0.0' }) {
         get: { tags: [tag], summary: 'Download de arquivo', operationId: `download_${ep.slug}`,
           parameters: [idParam, { name: 'arquivoId', in: 'path', required: true, schema: { type: 'integer' } }],
           responses: { 200: { description: 'Conteúdo do arquivo' }, 404: errorRef('Não encontrado'), ...commonErr } }
+      };
+    }
+  }
+
+  if (consultas.length) {
+    tags.push({ name: 'consultas', description: 'Consultas SQL personalizadas (somente leitura)' });
+    const PARAM_SCHEMA = { ...TYPE_SCHEMA };
+    for (const c of consultas) {
+      const params = [
+        ...c.parametros.map((p) => ({
+          name: p.nome, in: 'query', required: !!p.obrigatorio && (p.padrao === null || p.padrao === undefined || p.padrao === ''),
+          description: [p.descricao, p.padrao ? `Padrão: ${p.padrao}` : ''].filter(Boolean).join(' — ') || undefined,
+          schema: PARAM_SCHEMA[p.tipo] || { type: 'string' }
+        })),
+        { name: 'page', in: 'query', schema: { type: 'integer', minimum: 1, default: 1 } },
+        { name: 'pageSize', in: 'query', schema: { type: 'integer', minimum: 1, maximum: c.paginacao.max, default: c.paginacao.padrao } }
+      ];
+      paths[`/api/v1/consultas/${c.slug}`] = {
+        get: {
+          tags: ['consultas'],
+          summary: c.nome + (c.descricao ? ' — ' + c.descricao : ''),
+          operationId: `consulta_${c.slug.replace(/-/g, '_')}`,
+          parameters: params,
+          responses: {
+            200: {
+              description: 'OK',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                success: { type: 'boolean' },
+                data: { type: 'array', items: { type: 'object', additionalProperties: true } },
+                pagination: { type: 'object', properties: {
+                  page: { type: 'integer' }, pageSize: { type: 'integer' }, total: { type: 'integer', nullable: true },
+                  totalPages: { type: 'integer', nullable: true }, hasMore: { type: 'boolean' }
+                } }
+              } } } }
+            },
+            400: errorRef('Parâmetros inválidos'), 401: errorRef('Não autenticado'), 403: errorRef('Sem permissão'),
+            404: errorRef('Não encontrada'), 429: errorRef('Limite de requisições'), 500: errorRef('Erro interno')
+          }
+        }
       };
     }
   }

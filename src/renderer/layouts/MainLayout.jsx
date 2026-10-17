@@ -12,6 +12,7 @@ const MENU = [
   ] },
   { title: 'APIs', items: [
     { to: '/apis/endpoints', label: 'Endpoints', icon: 'endpoint' },
+    { to: '/apis/consultas', label: 'Consultas SQL', icon: 'terminal' },
     { to: '/apis/tokens', label: 'Tokens', icon: 'key' },
     { to: '/apis/documentacao', label: 'Documentação', icon: 'book' },
     { to: '/apis/testador', label: 'Testador de API', icon: 'send' }
@@ -63,7 +64,7 @@ export default function MainLayout() {
             ))}
           </div>
         ))}
-        <NavLink to="/sistema/sobre" className="sidebar-footer">Data Gateway 1.0.0 · API2Dev</NavLink>
+        <NavLink to="/sistema/sobre" className="sidebar-footer">Data Gateway 1.1.0 · API2Dev</NavLink>
       </aside>
       <div className="main">
         <header className="topbar">

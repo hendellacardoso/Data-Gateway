@@ -54,7 +54,8 @@ function createDocsRouter(ctx) {
 function makeSpecBuilder(ctx) {
   return (serverUrl) => {
     const eps = ctx.endpoints.listPublishedSlugs().map((s) => ctx.metadata.get(s)).filter(Boolean);
-    return buildOpenApi(eps, { serverUrl, version: ctx.version });
+    const consultas = ctx.consultas ? ctx.consultas.listPublishedSlugs().map((s) => ctx.consultas.loadRuntime(s)).filter(Boolean) : [];
+    return buildOpenApi(eps, { serverUrl, version: ctx.version, consultas });
   };
 }
 

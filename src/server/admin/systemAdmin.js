@@ -5,7 +5,8 @@ const { GatewayError } = require('../errors');
 
 const EXPORT_TABLES = [
   'GW_BANCO', 'GW_BANCO_PARAMETRO', 'GW_TABELA', 'GW_CAMPO', 'GW_RELACIONAMENTO', 'GW_ENDPOINT',
-  'GW_ENDPOINT_CAMPO', 'GW_ENDPOINT_FILTRO', 'GW_ENDPOINT_ORDEM', 'GW_TOKEN', 'GW_TOKEN_PERMISSAO', 'GW_CONFIG'
+  'GW_ENDPOINT_CAMPO', 'GW_ENDPOINT_FILTRO', 'GW_ENDPOINT_ORDEM', 'GW_TOKEN', 'GW_TOKEN_PERMISSAO', 'GW_CONFIG',
+  'GW_CONSULTA', 'GW_CONSULTA_PARAMETRO', 'GW_TOKEN_PERMISSAO_CONSULTA'
 ];
 
 function startOfTodayIso() {
@@ -33,6 +34,7 @@ function createSystemAdmin(ctx, hooks = {}) {
         bancosConectados: ativos.filter((s) => s.conectado).length,
         bancosComErro: ativos.filter((s) => s.ultimoErro).length,
         endpoints: db.prepare('SELECT COUNT(*) AS n FROM GW_ENDPOINT WHERE PUBLICADO = 1 AND ATIVO = 1').get().n,
+        consultas: db.prepare('SELECT COUNT(*) AS n FROM GW_CONSULTA WHERE PUBLICADO = 1 AND ATIVO = 1').get().n,
         tokens: db.prepare("SELECT COUNT(*) AS n FROM GW_TOKEN WHERE ATIVO = 1 AND REVOGADO_EM IS NULL AND (EXPIRA_EM IS NULL OR EXPIRA_EM > strftime('%Y-%m-%dT%H:%M:%fZ','now'))").get().n,
         requisicoesHoje: req.total || 0,
         errosHoje: req.erros || 0,

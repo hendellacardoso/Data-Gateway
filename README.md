@@ -29,6 +29,10 @@ Aplicativo desktop (Windows) que transforma tabelas de bancos de dados existente
     <td><img src="docs/screenshots/16-swagger.png" alt="Swagger UI"><br><sub><b>Documentação</b> OpenAPI 3 / Swagger UI gerada automaticamente</sub></td>
   </tr>
   <tr>
+    <td><img src="docs/screenshots/17-consulta-diagrama.png" alt="Montador visual de consultas"><br><sub><b>Consultas SQL</b> — montador visual com ligações por chave estrangeira</sub></td>
+    <td><img src="docs/screenshots/18-consulta-sql.png" alt="Editor SQL"><br><sub><b>Consultas SQL</b> — editor, parâmetros e resultado do teste</sub></td>
+  </tr>
+  <tr>
     <td><img src="docs/screenshots/12-logs.png" alt="Logs"><br><sub><b>Logs</b> de requisições</sub></td>
     <td><img src="docs/screenshots/13-auditoria.png" alt="Auditoria"><br><sub><b>Auditoria</b> do painel e da API</sub></td>
   </tr>
@@ -70,8 +74,8 @@ e faz o `push` para a branch `main`. `node_modules`, `dist`, `release` e bancos 
 
 Dê dois cliques em `gerar-instalador.bat` (ou rode `npm run dist`). São gerados em `release/`:
 
-- `DataGateway-Setup-1.0.0.exe` — instalador NSIS
-- `DataGateway-Portable-1.0.0.exe` — executável portátil
+- `DataGateway-Setup-1.1.0.exe` — instalador NSIS
+- `DataGateway-Portable-1.1.0.exe` — executável portátil
 - `win-unpacked/Data Gateway.exe` — aplicativo descompactado
 
 Os executáveis (~100 MB) **não vão para o Git** (limite de 100 MB por arquivo do GitHub; a pasta `release/` está no `.gitignore`).
@@ -136,6 +140,27 @@ Authorization: Bearer → token (hash SHA-256) → status/expiração → endpoi
 3. Registre em `server/drivers/index.js` e inclua o tipo no `CHECK` de `GW_BANCO` via nova migration.
 
 ---
+
+## Consultas SQL personalizadas (v1.1)
+
+Em **APIs → Consultas SQL** é possível montar um SELECT (com JOINs, agrupamentos e ordenação), testá-lo e publicá-lo como
+`GET /api/v1/consultas/<endereço>`:
+
+- **Diagrama:** adicione tabelas, marque colunas; as ligações (JOIN) são sugeridas pelas chaves estrangeiras. A grade define
+  saída, agregado, alias, ordenação, agrupamento e critério (ex.: `= :codigo`, `LIKE :nome`).
+- **SQL:** editor com numeração de linhas (Ctrl+Enter/F5 executa), abrir/salvar `.sql`, parâmetros nomeados `:nome` com tipo,
+  obrigatório e valor de teste. **Resultado** com “Exibir os primeiros N registros”, paginação, exportação CSV/JSON, log e histórico.
+- **Publicação:** endereço, paginação, total de registros e tokens com acesso (também em Tokens → Permissões).
+
+Segurança: o SQL é escrito apenas pelo administrador; quem chama a API envia somente valores de parâmetros (parametrizados).
+São aceitos apenas `SELECT`/`WITH` em um único comando, sem palavras de escrita/administração; a execução ocorre em transação
+**somente leitura** (PostgreSQL/MySQL), conexão read-only (SQLite) ou transação sempre desfeita (SQL Server). Recomenda-se usar
+nessa conexão um usuário de banco apenas com permissão de leitura.
+
+```http
+GET /api/v1/consultas/clientes-com-endereco?desde=1&page=1&pageSize=50
+Authorization: Bearer <token>
+```
 
 ## Interface
 

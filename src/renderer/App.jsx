@@ -23,6 +23,8 @@ import AuditoriaPage from './pages/AuditoriaPage.jsx';
 import UsuariosPage from './pages/UsuariosPage.jsx';
 import ConfiguracoesPage from './pages/ConfiguracoesPage.jsx';
 import SobrePage from './pages/SobrePage.jsx';
+import ConsultasPage from './pages/consultas/ConsultasPage.jsx';
+import ConsultaEditorPage from './pages/consultas/ConsultaEditorPage.jsx';
 
 /** Navegação solicitada pelo menu do Tray. */
 function TrayNavigation() {
@@ -47,6 +49,9 @@ function Gate() {
           <Route path="apis/endpoints" element={<EndpointsPage />} />
           <Route path="apis/endpoints/novo" element={<WizardPage />} />
           <Route path="apis/endpoints/:id" element={<WizardPage />} />
+          <Route path="apis/consultas" element={<ConsultasPage />} />
+          <Route path="apis/consultas/nova" element={<ConsultaEditorPage key="nova" />} />
+          <Route path="apis/consultas/:id" element={<ConsultaEditorPage />} />
           <Route path="apis/tokens" element={<TokensPage />} />
           <Route path="apis/documentacao" element={<DocsPage />} />
           <Route path="apis/testador" element={<TesterPage />} />

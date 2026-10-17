@@ -32,6 +32,12 @@ class DatabaseDriver {
   /** @returns {Promise<{rows: object[], rowsAffected: number, insertId: any}>} */
   async execute(/* sql, params */) { throw new Error('execute() não implementado'); }
 
+  /**
+   * Executa SELECT em modo somente leitura (transação read-only ou desfeita ao final).
+   * @returns {Promise<{rows: object[], columns: string[]}>}
+   */
+  async queryReadOnly(/* sql, params */) { throw new Error('queryReadOnly() não implementado'); }
+
   async getTables() { throw new Error('getTables() não implementado'); }
   async getColumns() { throw new Error('getColumns() não implementado'); }
   async getPrimaryKeys() { throw new Error('getPrimaryKeys() não implementado'); }

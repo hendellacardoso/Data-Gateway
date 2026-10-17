@@ -54,6 +54,20 @@ class MySqlDriver extends DatabaseDriver {
     return { rows: [], rowsAffected: r.affectedRows || 0, insertId: r.insertId || null };
   }
 
+  /** MySQL/MariaDB: START TRANSACTION READ ONLY e ROLLBACK ao final. */
+  async queryReadOnly(sql, params) {
+    await this.connect();
+    const conn = await this.pool.getConnection();
+    try {
+      await conn.query('START TRANSACTION READ ONLY');
+      const [rows, fields] = await conn.query({ sql, timeout: this.config.queryTimeout || 30000 }, params || []);
+      return { rows: Array.isArray(rows) ? rows : [], columns: (fields || []).map((f) => f.name) };
+    } finally {
+      await conn.query('ROLLBACK').catch(() => {});
+      conn.release();
+    }
+  }
+
   async getServerVersion() {
     const r = await this.query('SELECT VERSION() AS v');
     return (this.type === 'mariadb' ? 'MariaDB ' : 'MySQL ') + (r[0] && r[0].v);

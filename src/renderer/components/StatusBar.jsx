@@ -48,6 +48,7 @@ export default function StatusBar() {
             Bancos {s.bancosConectados}/{s.bancos}{s.bancosComErro ? ` · ${s.bancosComErro} falha` : ''}
           </Item>
           <Item icon="endpoint" onClick={() => navigate('/apis/endpoints')} title="Endpoints publicados">Endpoints {fmtNumber(s.endpoints)}</Item>
+          <Item icon="terminal" onClick={() => navigate('/apis/consultas')} title="Consultas SQL publicadas">Consultas {fmtNumber(s.consultas)}</Item>
           <Item icon="key" onClick={() => navigate('/apis/tokens')} title="Tokens ativos">Tokens {fmtNumber(s.tokens)}</Item>
           <Item icon="send" onClick={() => navigate('/monitoramento/logs')} title="Requisições recebidas hoje">Hoje {fmtNumber(s.requisicoesHoje)} req.</Item>
           <Item icon="alert" tone={s.errosHoje ? 'warn' : undefined} onClick={() => navigate('/monitoramento/logs')} title="Respostas com status ≥ 400 hoje">Erros {fmtNumber(s.errosHoje)}</Item>

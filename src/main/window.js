@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const { pathToFileURL } = require('url');
 const { BrowserWindow, shell, session, screen } = require('electron');
 
 /** Tamanho mínimo da janela principal. */
@@ -34,12 +33,24 @@ function applyCsp() {
   });
 }
 
-/** URL pertence ao próprio painel? (usado para bloquear navegação e validar a origem das chamadas IPC) */
+/**
+ * URL pertence ao próprio painel? (usado para bloquear navegação e validar a origem das chamadas IPC)
+ *
+ * Em produção a comparação é feita pelo caminho decodificado e sem diferenciar maiúsculas/minúsculas:
+ * no Windows o mesmo arquivo pode aparecer com letra de unidade em outra caixa, com nome curto 8.3
+ * (ex.: C:\Users\HENDEL~1\...) ou com codificação de URL diferente — especialmente na versão
+ * portátil, que é extraída para a pasta temporária. Por isso aceitamos qualquer file:// que aponte
+ * para ".../dist/renderer/index.html" dentro do pacote do aplicativo.
+ */
 function isTrustedUrl(url) {
   if (!url) return false;
   if (isDev) return url.startsWith(rendererUrl());
-  const base = pathToFileURL(path.dirname(rendererFile())).href;
-  return url.startsWith(base + '/');
+  let u;
+  try { u = new URL(url); } catch { return false; }
+  if (u.protocol !== 'file:') return false;
+  let pathname;
+  try { pathname = decodeURIComponent(u.pathname); } catch { return false; }
+  return pathname.replace(/\\/g, '/').toLowerCase().endsWith('/dist/renderer/index.html');
 }
 
 function createMainWindow({ show = true } = {}) {

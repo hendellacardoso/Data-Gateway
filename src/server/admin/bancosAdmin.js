@@ -101,6 +101,8 @@ function createBancosAdmin(ctx) {
     async remove(session, { id }) {
       const n = db.prepare('SELECT COUNT(*) AS n FROM GW_ENDPOINT e JOIN GW_TABELA t ON t.ID = e.TABELA_ID WHERE t.BANCO_ID = ?').get(id).n;
       if (n > 0) throw new GatewayError('VALIDATION_ERROR', `Esta conexão possui ${n} endpoint(s). Exclua-os antes.`);
+      const nc = db.prepare('SELECT COUNT(*) AS n FROM GW_CONSULTA WHERE BANCO_ID = ?').get(id).n;
+      if (nc > 0) throw new GatewayError('VALIDATION_ERROR', `Esta conexão possui ${nc} consulta(s) SQL. Exclua-as antes.`);
       await connections.invalidate(id);
       db.prepare('DELETE FROM GW_BANCO WHERE ID = ?').run(id);
       ctx.invalidate();

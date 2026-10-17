@@ -4,6 +4,8 @@ const path = require('path');
 const { openInternalDatabase } = require('../database/connection');
 const { ConfigRepository } = require('../database/repositories/configRepository');
 const { EndpointRepository } = require('../database/repositories/endpointRepository');
+const { ConsultaRepository } = require('../database/repositories/consultaRepository');
+const { ConsultaService } = require('./services/consultaService');
 const { ConnectionManager } = require('./services/connectionManager');
 const { MetadataService } = require('./services/metadataService');
 const { CrudService } = require('./services/crudService');
@@ -29,6 +31,8 @@ function createContext({ dataDir, electronSafeStorage, version = '1.0.0' }) {
   ctx.tokenAuth = new TokenAuth(db);
   ctx.crud = new CrudService({ connections: ctx.connections, metadata: ctx.metadata, permissions: ctx.tokenAuth });
   ctx.uploads = new UploadService({ db, dataDir });
+  ctx.consultas = new ConsultaRepository(db);
+  ctx.consultaService = new ConsultaService({ connections: ctx.connections });
   ctx.buildSpec = makeSpecBuilder(ctx);
   ctx.paths = { dataDir, db: path.join(dataDir, 'data-gateway.db'), uploads: path.join(dataDir, 'uploads') };
 

@@ -98,6 +98,25 @@ function registerIpc({ admin, ctx, getServerUrl }) {
         return { name: path.basename(f), size: st.size, data: fs.readFileSync(f) };
       });
     },
+    /** Salva texto (CSV/JSON/SQL) em arquivo escolhido pelo usuário. */
+    'system.saveTextFile': async ({ content, defaultName, filters }, event) => {
+      const r = await dialog.showSaveDialog(ownerWindow(event), {
+        title: 'Salvar arquivo',
+        defaultPath: String(defaultName || 'arquivo.txt').replace(/[\\/:*?"<>|]/g, '_'),
+        filters: Array.isArray(filters) ? filters : undefined
+      });
+      if (r.canceled) return { canceled: true };
+      fs.writeFileSync(r.filePath, String(content ?? ''), 'utf8');
+      return { ok: true, file: r.filePath };
+    },
+    /** Abre um arquivo de texto (.sql) escolhido pelo usuário e devolve o conteúdo. */
+    'system.openTextFile': async ({ filters }, event) => {
+      const r = await dialog.showOpenDialog(ownerWindow(event), { title: 'Abrir arquivo', properties: ['openFile'], filters: Array.isArray(filters) ? filters : undefined });
+      if (r.canceled) return null;
+      const st = fs.statSync(r.filePaths[0]);
+      if (st.size > 2 * 1024 * 1024) throw new GatewayError('VALIDATION_ERROR', 'Arquivo muito grande (máximo 2 MB).');
+      return { name: path.basename(r.filePaths[0]), content: fs.readFileSync(r.filePaths[0], 'utf8') };
+    },
     'backup.exportToFile': async (p, event, s) => {
       const doc = admin.actions['backup.export'].fn(p, s);
       const r = await dialog.showSaveDialog(ownerWindow(event), {
@@ -122,7 +141,11 @@ function registerIpc({ admin, ctx, getServerUrl }) {
 
   ipcMain.handle('gw:invoke', async (event, action, payload) => {
     try {
-      if (!isTrustedUrl(event.senderFrame && event.senderFrame.url)) {
+      // Só o frame principal de uma janela do próprio app, carregando o painel, pode chamar ações.
+      const frame = event.senderFrame;
+      const isMainFrame = frame && event.sender.mainFrame && frame === event.sender.mainFrame;
+      if (!isMainFrame || !BrowserWindow.fromWebContents(event.sender) || !isTrustedUrl(frame.url || event.sender.getURL())) {
+        console.warn('[ipc] origem recusada:', frame && frame.url);
         throw new GatewayError('AUTHORIZATION_ERROR', 'Origem não autorizada.');
       }
       if (typeof action !== 'string') throw new GatewayError('VALIDATION_ERROR', 'Ação inválida.');

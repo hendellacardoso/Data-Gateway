@@ -58,6 +58,24 @@ class SqlServerDriver extends DatabaseDriver {
     return { rows: r.recordset || [], rowsAffected, insertId: null };
   }
 
+  /** SQL Server: executa dentro de uma transação que é SEMPRE desfeita (ROLLBACK). */
+  async queryReadOnly(sqlText, params) {
+    await this.connect();
+    const mssql = require('mssql');
+    const tx = new mssql.Transaction(this.pool);
+    await tx.begin();
+    try {
+      const req = new mssql.Request(tx);
+      (params || []).forEach((v, i) => req.input('p' + (i + 1), v));
+      const r = await req.query(sqlText);
+      const rs = r.recordset || [];
+      const columns = rs.columns ? Object.values(rs.columns).sort((a, b) => a.index - b.index).map((c) => c.name) : Object.keys(rs[0] || {});
+      return { rows: rs, columns };
+    } finally {
+      await tx.rollback().catch(() => {});
+    }
+  }
+
   async getServerVersion() {
     const r = await this.query("SELECT CAST(SERVERPROPERTY('ProductVersion') AS NVARCHAR(128)) AS v");
     return 'SQL Server ' + (r[0] && r[0].v);

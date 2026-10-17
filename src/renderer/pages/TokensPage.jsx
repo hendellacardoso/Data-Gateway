@@ -56,6 +56,7 @@ const COLS = [['listar', 'Consultar', 'opListar'], ['buscar', 'Consultar por ID'
 function PermissionsModal({ token, onClose }) {
   const { toast } = useApp();
   const { data, setData, error, loading } = useLoad('tokens.permissions', { tokenId: token.id });
+  const { data: cons, setData: setCons } = useLoad('consultas.tokenPermissions', { tokenId: token.id });
   const [busy, setBusy] = useState(false);
   const set = (i, k, v) => setData(data.map((r, j) => (j === i ? { ...r, [k]: v } : r)));
   const setRow = (i, v) => setData(data.map((r, j) => (j === i ? { ...r, ...Object.fromEntries(COLS.map(([k, , op]) => [k, v && r[op]])) } : r)));
@@ -64,6 +65,7 @@ function PermissionsModal({ token, onClose }) {
     setBusy(true);
     try {
       await call('tokens.savePermissions', { tokenId: token.id, permissoes: data });
+      if (cons) await call('consultas.saveTokenPermissions', { tokenId: token.id, consultaIds: cons.filter((x) => x.permitido).map((x) => x.consultaId) });
       toast('Permissões salvas.');
       onClose();
     } catch (e) { toast(e.message, 'error'); }
@@ -74,6 +76,7 @@ function PermissionsModal({ token, onClose }) {
     <Modal title={`Permissões — ${token.nome}`} size="xl" onClose={onClose}
       footer={<><Button onClick={onClose}>Cancelar</Button><Button variant="primary" loading={busy} onClick={save}>Salvar permissões</Button></>}>
       {error && <ErrorAlert error={error} />}
+      <div className="bold small mb-1">Endpoints</div>
       {loading ? <Loading /> : !data.length ? <Empty icon="endpoint" title="Nenhum endpoint configurado" /> : (
         <div className="table-wrap">
           <table className="table table-compact">
@@ -93,6 +96,15 @@ function PermissionsModal({ token, onClose }) {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      <div className="bold small mb-1 mt-2">Consultas SQL (somente leitura)</div>
+      {!cons ? <Loading /> : !cons.length ? <div className="muted small">Nenhuma consulta SQL criada.</div> : (
+        <div className="row wrap" style={{ gap: 18 }}>
+          {cons.map((x, i) => (
+            <Checkbox key={x.consultaId} label={<span className="mono">{x.slug}{!x.publicado && <span className="muted"> (rascunho)</span>}</span>}
+              checked={x.permitido} onChange={(v) => setCons(cons.map((y, j) => (j === i ? { ...y, permitido: v } : y)))} />
+          ))}
         </div>
       )}
     </Modal>

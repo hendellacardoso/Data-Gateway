@@ -96,6 +96,7 @@ class EndpointRepository {
     if (!p.bancoId) errors.push('Selecione o banco de dados.');
     if (!p.tabela) errors.push('Selecione a tabela.');
     if (!SLUG_RE.test(p.slug || '')) errors.push('Endpoint inválido: use letras minúsculas, números, "-" ou "_" (ex.: clientes).');
+    if (p.slug === 'consultas') errors.push('"consultas" é um endereço reservado para as Consultas SQL.');
     const campos = p.campos || [];
     if (!campos.length) errors.push('Nenhum campo configurado.');
     const apiNames = new Set();
