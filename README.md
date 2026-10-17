@@ -79,6 +79,8 @@ Para distribuir, publique-os em **GitHub → Releases → Draft a new release** 
 
 O instalador (NSIS): instala o aplicativo, cria atalhos (Área de Trabalho e Menu Iniciar), permite escolher a pasta e cria o desinstalador.
 O diretório de dados é criado no primeiro uso em `%APPDATA%\Data Gateway` (banco interno, chave mestra e uploads).
+Em desenvolvimento (`npm run dev`) é usada uma pasta separada, `%APPDATA%\Data Gateway (Dev)`, para não misturar testes com a instalação real.
+Para reiniciar do zero (novo administrador), feche o app pelo Tray → Sair e apague a pasta de dados correspondente.
 A opção **Iniciar com Windows** é controlada pelo próprio app (Tray ou Configurações) e abre o Gateway minimizado (`--hidden`).
 
 > Ícone gerado a partir de `imagens/logotipo.png`: `build/icon.ico` (executável, instalador e atalhos), `assets/icon.ico`/`icon.png` (janela) e `assets/tray.png` (bandeja, apenas o símbolo da nuvem para ficar legível em 16–32 px).
