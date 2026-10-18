@@ -12,6 +12,26 @@ function mapDbError(err, connections, bancoId) {
   const code = String(err.code || '');
   const num = Number(err.number || err.errno || 0);
   const msg = String(err.message || '');
+  // Firebird: códigos GDS (isc_*)
+  const gds = Number(err.gdscode || 0);
+  if (gds) {
+    if ([335544721, 335544726, 335544648, 335544741, 335544856].includes(gds)) {
+      if (connections) connections.invalidate(bancoId);
+      return new GatewayError('CONNECTION_ERROR', 'Falha de comunicação com o banco de dados.', { cause: err });
+    }
+    if (gds === 335544665 || gds === 335544349) {
+      return new GatewayError('CONFLICT', 'Registro duplicado: já existe um registro com estes valores únicos.', { cause: err });
+    }
+    if (gds === 335544466 || gds === 335544838 || gds === 335544839) {
+      return new GatewayError('CONFLICT', 'Operação viola um relacionamento (chave estrangeira) do banco.', { cause: err });
+    }
+    if (gds === 335544347) {
+      return new GatewayError('VALIDATION_ERROR', 'Um campo obrigatório do banco não foi informado.', { cause: err });
+    }
+    if (gds === 335544794) {
+      return new GatewayError('DATABASE_ERROR', 'Tempo limite da consulta excedido.', { cause: err });
+    }
+  }
   if (/^(ECONNREFUSED|ETIMEOUT|ESOCKET|ECONNRESET|ENOTFOUND|ECONNCLOSED|ELOGIN|PROTOCOL_CONNECTION_LOST)$/.test(code) ||
       /Connection is closed|connection terminated/i.test(msg)) {
     if (connections) connections.invalidate(bancoId);

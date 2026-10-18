@@ -3,7 +3,7 @@
 Aplicativo desktop (Windows) que transforma tabelas de bancos de dados existentes em **APIs REST seguras**, configuradas visualmente — sem escrever SQL e sem expor o banco à internet.
 
 **Stack:** Electron 37 · React 18 · Vite 5 · JavaScript · Node.js · SQLite (better-sqlite3) · CSS
-**Bancos suportados:** SQL Server · PostgreSQL · MySQL · MariaDB · SQLite
+**Bancos suportados:** SQL Server · PostgreSQL · MySQL · MariaDB · **Firebird** (2.5 a 5.0, dialeto 1 e 3) · SQLite
 
 ---
 
@@ -74,8 +74,8 @@ e faz o `push` para a branch `main`. `node_modules`, `dist`, `release` e bancos 
 
 Dê dois cliques em `gerar-instalador.bat` (ou rode `npm run dist`). São gerados em `release/`:
 
-- `DataGateway-Setup-1.1.0.exe` — instalador NSIS
-- `DataGateway-Portable-1.1.0.exe` — executável portátil
+- `DataGateway-Setup-1.2.0.exe` — instalador NSIS
+- `DataGateway-Portable-1.2.0.exe` — executável portátil
 - `win-unpacked/Data Gateway.exe` — aplicativo descompactado
 
 Os executáveis (~100 MB) **não vão para o Git** (limite de 100 MB por arquivo do GitHub; a pasta `release/` está no `.gitignore`).
@@ -111,7 +111,7 @@ src/
 │   ├── routes/              /api/v1 dinâmico, /docs (Swagger UI), /openapi.json
 │   ├── middleware/          headers de segurança, CORS, rate limit, logs, erros
 │   ├── services/            CRUD, conversão de tipos, pool de conexões, cache de metadados
-│   ├── drivers/             DatabaseDriver + SqlServer/Postgres/MySql(MariaDB)/Sqlite
+│   ├── drivers/             DatabaseDriver + SqlServer/Postgres/MySql(MariaDB)/Firebird/Sqlite
 │   ├── query-builder/       Query Builder seguro + dialetos
 │   ├── authentication/      tokens Bearer e permissões
 │   ├── uploads/             multipart, validação, filesystem ou banco
@@ -140,6 +140,26 @@ Authorization: Bearer → token (hash SHA-256) → status/expiração → endpoi
 3. Registre em `server/drivers/index.js` e inclua o tipo no `CHECK` de `GW_BANCO` via nova migration.
 
 ---
+
+## Firebird (v1.2) — sistemas Delphi
+
+Conexão em **Bancos → Nova conexão → Firebird**: servidor, porta (3050), **arquivo do banco** (caminho como o servidor
+enxerga, ex.: `C:\Sistema\Dados\SISTEMA.FDB`, ou alias), usuário (SYSDBA) e senha. Cliente 100% JavaScript
+(`node-firebird`): não precisa instalar `fbclient.dll` nem o Firebird no computador do Gateway.
+
+- **Versões:** 2.5, 3.0, 4.0 e 5.0. No 3.0+ a autenticação SRP e a criptografia da conexão são negociadas automaticamente
+  (opção "Criptografar conexão" para desligar, se o servidor usar `WireCrypt = Disabled`).
+- **Charset:** "Automático" usa UTF8, ou **WIN1252** quando o banco foi criado com charset `NONE` (comum em sistemas antigos).
+  Também é possível escolher UTF8, WIN1252, ISO8859_1 ou NONE.
+- **Dialeto 1 e 3:** o dialeto é detectado; nomes simples em maiúsculas são gerados sem aspas (compatível com o dialeto 1).
+- **Generator + trigger:** chaves preenchidas por `NEW.CODIGO = GEN_ID(...)`/`NEXT VALUE FOR` são reconhecidas como automáticas;
+  a inclusão usa `RETURNING` e devolve o registro com o código gerado. Colunas `IDENTITY` (3.0+) também.
+- **Tipos:** `DATE` → `"AAAA-MM-DD"`; `TIMESTAMP` → data/hora local `"AAAA-MM-DDTHH:mm:ss"`; `CHAR` sem espaços à direita;
+  `BLOB SUB_TYPE TEXT` → texto; `NUMERIC/DECIMAL` exatos. Booleanos em `CHAR(1)` (`'S'/'N'`), `SMALLINT` (0/1) ou `BOOLEAN`:
+  marque o tipo lógico BOOLEANO no assistente — em `CHAR` o Gateway grava `'S'`/`'N'`.
+- **Filtros "contém/começa/termina":** sem diferenciar maiúsculas (`UPPER(...) LIKE UPPER(...)`).
+- **Paginação:** `ROWS m TO n`. **Consultas SQL:** executadas em transação `READ ONLY` do Firebird; `GEN_ID`/`NEXT VALUE FOR`
+  e `FIRST/SKIP/ROWS` no SQL são recusados (a paginação é do Gateway).
 
 ## Consultas SQL personalizadas (v1.1)
 
@@ -218,6 +238,8 @@ Testes opcionais contra bancos reais (`tests/externos.test.js`):
 set GW_PG_PORT=5432& set GW_PG_PASSWORD=...& npm test
 # MySQL/MariaDB: banco "erp", usuário "gw"
 set GW_MY_PORT=3306& set GW_MY_PASSWORD=...& set GW_MY_TYPE=mariadb& npm test
+# Firebird (tests/firebird.test.js): crie os bancos com os scripts de tests/firebird/*.sql (isql)
+set GW_FB_HOST=127.0.0.1& set GW_FB_DB=C:\fb\ERP.FDB& set GW_FB_DB_NONE=C:\fb\LEGADO.FDB& set GW_FB_DB_D1=C:\fb\DIALETO1.GDB& npm test
 ```
 
 ---

@@ -9,7 +9,7 @@
  * Camadas de proteção:
  *  1. Análise léxica: um único comando, iniciando com SELECT/WITH, sem palavras-chave de escrita
  *     ou administração e sem funções perigosas (fora de strings/comentários/identificadores).
- *  2. Execução dentro de transação somente leitura (PostgreSQL/MySQL), conexão read-only (SQLite)
+ *  2. Execução dentro de transação somente leitura (PostgreSQL/MySQL/Firebird), conexão read-only (SQLite)
  *     ou transação sempre desfeita com ROLLBACK (SQL Server).
  *  3. Paginação e limite de linhas aplicados pelo Gateway; timeout do driver.
  */
@@ -29,7 +29,8 @@ const FORBIDDEN_WORDS = [
   'IMPERSONATE', 'OUTFILE', 'DUMPFILE'
 ];
 const FORBIDDEN_WORD_RE = new RegExp('\\b(' + FORBIDDEN_WORDS.join('|') + ')\\b', 'i');
-const FORBIDDEN_FN_RE = /\b(PG_SLEEP\w*|PG_READ_FILE|PG_READ_BINARY_FILE|PG_LS_DIR|PG_STAT_FILE|PG_TERMINATE_BACKEND|PG_CANCEL_BACKEND|PG_RELOAD_CONF|LO_IMPORT|LO_EXPORT|DBLINK\w*|SLEEP|BENCHMARK|LOAD_FILE|SYS_EXEC|SYS_EVAL|XP_\w+|SP_\w+|SET_CONFIG|NEXTVAL|SETVAL|GET_LOCK|RELEASE_LOCK|READFILE|WRITEFILE|LOAD_EXTENSION)\s*\(/i;
+const FORBIDDEN_FN_RE = /\b(PG_SLEEP\w*|PG_READ_FILE|PG_READ_BINARY_FILE|PG_LS_DIR|PG_STAT_FILE|PG_TERMINATE_BACKEND|PG_CANCEL_BACKEND|PG_RELOAD_CONF|LO_IMPORT|LO_EXPORT|DBLINK\w*|SLEEP|BENCHMARK|LOAD_FILE|SYS_EXEC|SYS_EVAL|XP_\w+|SP_\w+|SET_CONFIG|NEXTVAL|SETVAL|GET_LOCK|RELEASE_LOCK|READFILE|WRITEFILE|LOAD_EXTENSION|GEN_ID|RDB\$SET_CONTEXT)\s*\(/i;
+const NEXT_VALUE_RE = /\bNEXT\s+VALUE\s+FOR\b/i;
 const REPLACE_STMT_RE = /\bREPLACE\b(?!\s*\()/i;
 
 /**
@@ -130,7 +131,9 @@ function analyze(sqlText, dbType) {
   const ff = FORBIDDEN_FN_RE.exec(bodyMasked);
   if (ff) errors.push(`Função não permitida em consultas: ${ff[1].toUpperCase()}.`);
 
-  if ((dbType === 'mysql' || dbType === 'mariadb' || dbType === 'sqlite') && bodyMasked.includes('?')) {
+  if (NEXT_VALUE_RE.test(bodyMasked)) errors.push('Função não permitida em consultas: NEXT VALUE FOR.');
+
+  if ((dbType === 'mysql' || dbType === 'mariadb' || dbType === 'sqlite' || dbType === 'firebird') && bodyMasked.includes('?')) {
     errors.push('Use parâmetros nomeados (ex.: :codigo) em vez de "?".');
   }
   if (dbType === 'postgres' && /\$\d/.test(bodyMasked)) errors.push('Use parâmetros nomeados (ex.: :codigo) em vez de $1.');
@@ -146,6 +149,9 @@ function analyze(sqlText, dbType) {
   };
   if (topLevel(/\b(LIMIT|OFFSET|FETCH)\b/).length) errors.push('Remova LIMIT/OFFSET/FETCH: a paginação é aplicada automaticamente pelo Gateway.');
   if (topLevel(/\bSELECT\s+(DISTINCT\s+)?TOP\b/).length) errors.push('Remova TOP: a paginação é aplicada automaticamente pelo Gateway.');
+  if (dbType === 'firebird' && (topLevel(/\bSELECT\s+(DISTINCT\s+)?(FIRST|SKIP)\b/).length || topLevel(/\bROWS\b/).length)) {
+    errors.push('Remova FIRST/SKIP/ROWS: a paginação é aplicada automaticamente pelo Gateway.');
+  }
   if (topLevel(/\bFOR\s+(XML|JSON|BROWSE)\b/).length) errors.push('FOR XML/JSON não é suportado em consultas publicadas.');
   const orders = topLevel(/\bORDER\s+BY\b/);
   const orderByAt = orders.length ? orders[orders.length - 1] : -1;
@@ -211,6 +217,11 @@ function build(a, dbType, values, page, types = {}) {
   const offsetPh = ph(page.offset);
   if (dbType === 'sqlserver') {
     paged = `${sql}${a.orderByAt >= 0 ? '' : '\nORDER BY (SELECT NULL)'}\nOFFSET ${offsetPh} ROWS FETCH NEXT ${limitPh} ROWS ONLY`;
+  } else if (dbType === 'firebird') {
+    // ROWS inicio TO fim (1-based) — troca os valores já empilhados (limit, offset) por (inicio, fim)
+    params[params.length - 2] = page.offset + 1;
+    params[params.length - 1] = page.offset + page.limit;
+    paged = `${sql}\nROWS ${limitPh} TO ${offsetPh}`;
   } else {
     paged = `${sql}\nLIMIT ${limitPh} OFFSET ${offsetPh}`;
   }
@@ -225,7 +236,9 @@ function build(a, dbType, values, page, types = {}) {
     named = new Map();
     const upto = a.orderByAt >= 0 ? a.orderByAt : fullLen;
     const inner = replaceParams(a.body.slice(0, upto), 0, upto);
-    countSql = `SELECT COUNT(*) AS ${d.quote('total')} FROM (\n${inner}\n) ${d.quote('gw_q')}`;
+    countSql = dbType === 'firebird'
+      ? `SELECT COUNT(*) AS TOTAL FROM (\n${inner}\n) GW_Q`
+      : `SELECT COUNT(*) AS ${d.quote('total')} FROM (\n${inner}\n) ${d.quote('gw_q')}`;
     countParams = params.slice();
   }
   return { sql: paged, params: dataParams, countSql, countParams };

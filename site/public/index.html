@@ -4,19 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Data Gateway — transforme seu banco de dados em API REST | API2Dev</title>
-  <meta name="description" content="Data Gateway é um aplicativo gratuito para Windows que transforma bancos SQL Server, PostgreSQL, MySQL, MariaDB e SQLite em APIs REST seguras, configuradas visualmente, sem programar.">
+  <meta name="description" content="Data Gateway é um aplicativo gratuito para Windows que transforma bancos SQL Server, PostgreSQL, MySQL, MariaDB, Firebird e SQLite em APIs REST seguras, configuradas visualmente, sem programar.">
   <meta name="theme-color" content="#0b1224">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="canonical" href="https://api2dev.com.br/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Data Gateway — seu banco de dados virando API REST, sem programar">
-  <meta property="og:description" content="Gratuito para Windows. SQL Server, PostgreSQL, MySQL, MariaDB e SQLite. Tokens, permissões, Swagger, logs e auditoria.">
-  <meta property="og:image" content="https://api2dev.com.br/img/prints/01-dashboard.webp">
+  <meta property="og:description" content="Gratuito para Windows. SQL Server, PostgreSQL, MySQL, MariaDB, Firebird e SQLite. Tokens, permissões, Swagger, logs e auditoria.">
+  <meta property="og:image" content="https://api2dev.com.br/img/divulgacao/data-gateway-banner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://api2dev.com.br/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/site.css?v=1.2.0">
 </head>
 <body>
   <header class="topo" id="topo">
@@ -31,6 +33,7 @@
       <nav id="menu" class="menu">
         <a href="#como-funciona">Como funciona</a>
         <a href="#aplicacoes">Aplicações</a>
+        <a href="#firebird">Firebird</a>
         <a href="#recursos">Recursos</a>
         <a href="#telas">Telas</a>
         <a href="#primeiros-passos">Primeiros passos</a>
@@ -46,9 +49,9 @@
       <div class="hero-brilho" aria-hidden="true"></div>
       <div class="container hero-in">
         <div class="hero-texto">
-          <span class="selo"><span class="ponto"></span> Gratuito · Windows 10/11 · <span data-versao>v1.1.0</span></span>
+          <span class="selo"><span class="ponto"></span> Gratuito · Windows 10/11 · <span data-versao>v1.2.0</span></span>
           <h1>Seu banco de dados virando <span class="grad">API REST</span> em minutos — sem programar.</h1>
-          <p class="lead">O <b>Data Gateway</b> conecta no banco que você já usa (SQL Server, PostgreSQL, MySQL, MariaDB ou SQLite)
+          <p class="lead">O <b>Data Gateway</b> conecta no banco que você já usa (SQL Server, PostgreSQL, MySQL, MariaDB, Firebird ou SQLite)
             e publica APIs seguras, com tokens, permissões, paginação, filtros, documentação Swagger, logs e auditoria —
             tudo configurado em telas, direto do seu Windows.</p>
           <div class="hero-acoes">
@@ -59,7 +62,7 @@
             <a href="#download" class="btn btn-lg btn-contorno">Ver opções de download</a>
           </div>
           <ul class="hero-bancos" aria-label="Bancos suportados">
-            <li>SQL Server</li><li>PostgreSQL</li><li>MySQL</li><li>MariaDB</li><li>SQLite</li>
+            <li>SQL Server</li><li>PostgreSQL</li><li>MySQL</li><li>MariaDB</li><li class="novo">Firebird</li><li>SQLite</li>
           </ul>
         </div>
         <div class="hero-imagem">
@@ -82,7 +85,7 @@
     <!-- ============================================================ NÚMEROS -->
     <section class="faixa">
       <div class="container faixa-in">
-        <div><b>5</b><span>bancos suportados</span></div>
+        <div><b>6</b><span>bancos suportados</span></div>
         <div><b>0</b><span>linhas de código para publicar</span></div>
         <div><b>100%</b><span>local — seus dados não saem do servidor</span></div>
         <div><b>R$ 0</b><span>gratuito para baixar e usar</span></div>
@@ -149,7 +152,7 @@
           <article class="cartao">
             <div class="icone"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/><circle cx="7" cy="7" r="1"/></svg></div>
             <h3>Integração de ERP legado</h3>
-            <p>Sistemas antigos em Delphi, VB6, Clipper ou Access passam a falar REST/JSON. Integre com e-commerce, marketplaces e parceiros.</p>
+            <p>Sistemas em Delphi com Firebird, VB6, Clipper ou Access passam a falar REST/JSON. Integre com e-commerce, marketplaces e parceiros.</p>
           </article>
           <article class="cartao">
             <div class="icone"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
@@ -186,6 +189,31 @@
             <h3>Prototipagem e homologação</h3>
             <p>Suba uma API em minutos para validar uma ideia, testar um front-end ou demonstrar uma integração a um cliente.</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ FIREBIRD -->
+    <section id="firebird" class="secao secao-fb">
+      <div class="container fb-in">
+        <div class="fb-texto">
+          <span class="sobretitulo">Novo na versão 1.2</span>
+          <h2>Firebird e sistemas Delphi viram API em minutos</h2>
+          <p>Seu ERP em Delphi continua funcionando do jeito que está. O Data Gateway lê o mesmo banco Firebird e publica
+            APIs para o app de vendas, o e-commerce, o Power BI ou o portal do cliente — sem mexer no sistema.</p>
+          <ul class="lista-fb">
+            <li><b>Firebird 2.5, 3.0, 4.0 e 5.0</b> · dialeto 1 e 3 · sem instalar <code>fbclient.dll</code></li>
+            <li><b>Acentos corretos</b> mesmo em bancos antigos com charset <code>NONE</code>/<code>WIN1252</code> (detecção automática)</li>
+            <li><b>Generator + trigger</b> reconhecidos: o POST devolve o registro com o código gerado</li>
+            <li><b>Campos “S”/“N”</b> em <code>CHAR(1)</code> viram <code>true</code>/<code>false</code> no JSON</li>
+            <li>Datas no formato certo, <code>CHAR</code> sem espaços sobrando e <code>BLOB</code> texto como texto</li>
+            <li>Consultas SQL com JOINs executadas em transação <b>somente leitura</b> do próprio Firebird</li>
+          </ul>
+          <a href="#download" class="btn btn-primario">Baixar a versão 1.2</a>
+        </div>
+        <div class="fb-imagem">
+          <button type="button" data-zoom class="fb-shot"><img loading="lazy" src="/img/prints/19-firebird-conexao.webp" alt="Cadastro de conexão Firebird com teste realizado com sucesso" width="1600" height="960"></button>
+          <button type="button" data-zoom class="fb-shot fb-shot-2"><img loading="lazy" src="/img/prints/21-firebird-consulta.webp" alt="Consulta SQL com JOIN em banco Firebird" width="1600" height="960"></button>
         </div>
       </div>
     </section>
@@ -246,6 +274,9 @@
           <p>Clique para ampliar.</p>
         </header>
         <div class="galeria">
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/20-firebird-campos.webp" alt="Campos de uma tabela Firebird no assistente" width="1600" height="960"></button><figcaption>Firebird — campos detectados (generator, CHAR “S/N”)</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/22-firebird-testador.webp" alt="Testador de API com dados vindos do Firebird" width="1600" height="960"></button><figcaption>Firebird — JSON com acentos e datas corretas</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/21-firebird-consulta.webp" alt="Consulta SQL no Firebird" width="1600" height="960"></button><figcaption>Firebird — consulta SQL com JOIN</figcaption></figure>
           <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/03-conexao-teste.webp" alt="Cadastro e teste de conexão com o banco" width="1600" height="960"></button><figcaption>Conexão e teste com o banco</figcaption></figure>
           <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/05-wizard-campos.webp" alt="Assistente: configuração dos campos" width="1600" height="960"></button><figcaption>Assistente — campos da API</figcaption></figure>
           <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/06-wizard-filtros.webp" alt="Assistente: filtros e paginação" width="1600" height="960"></button><figcaption>Assistente — filtros e paginação</figcaption></figure>
@@ -325,7 +356,7 @@ GET /api/v1/consultas/vendas-por-cliente?desde=2026-01-01</code></pre>
       <div class="container">
         <header class="secao-cab">
           <span class="sobretitulo">Download gratuito</span>
-          <h2>Baixe o Data Gateway <span data-versao>v1.1.0</span></h2>
+          <h2>Baixe o Data Gateway <span data-versao>v1.2.0</span></h2>
           <p>Para Windows 10 e 11 (64 bits). Não precisa instalar Node.js, banco ou qualquer outro programa.</p>
         </header>
         <div class="downloads">
@@ -379,7 +410,8 @@ GET /api/v1/consultas/vendas-por-cliente?desde=2026-01-01</code></pre>
           <details><summary>É gratuito mesmo?</summary><p>Sim. O Data Gateway pode ser baixado e usado gratuitamente, inclusive em empresas. Não há limite de endpoints, tokens ou requisições.</p></details>
           <details><summary>Preciso saber programar?</summary><p>Não para publicar a API: tudo é feito em telas. Para <i>consumir</i> a API você usa a ferramenta de sua preferência (app, site, Power BI, n8n etc.). Conhecer SQL ajuda apenas no recurso opcional de Consultas SQL.</p></details>
           <details><summary>Meus dados passam por algum servidor da API2Dev?</summary><p>Não. O Data Gateway roda no seu computador ou servidor e conversa diretamente com o seu banco. Configurações ficam em um banco SQLite local, em <code>%APPDATA%\Data Gateway</code>.</p></details>
-          <details><summary>Quais bancos são suportados?</summary><p>Microsoft SQL Server, PostgreSQL, MySQL, MariaDB e SQLite. É possível ter várias conexões ao mesmo tempo, inclusive de tipos diferentes.</p></details>
+          <details><summary>Quais bancos são suportados?</summary><p>Microsoft SQL Server, PostgreSQL, MySQL, MariaDB, Firebird (2.5 a 5.0) e SQLite. É possível ter várias conexões ao mesmo tempo, inclusive de tipos diferentes.</p></details>
+          <details><summary>Funciona com o Firebird do meu sistema Delphi?</summary><p>Sim, a partir da versão 1.2. Firebird 2.5, 3.0, 4.0 e 5.0, dialeto 1 e 3, inclusive bancos com charset NONE/WIN1252. Basta informar o servidor, a porta (3050) e o caminho do arquivo <code>.FDB</code> como o servidor enxerga. Não precisa instalar o <code>fbclient.dll</code> no computador do Data Gateway.</p></details>
           <details><summary>Posso alterar a estrutura do meu banco com ele?</summary><p>Não. O Data Gateway não cria nem altera tabelas no seu banco. Ele só lê a estrutura e executa as operações de dados que você liberar em cada endpoint.</p></details>
           <details><summary>Como acesso a API de fora da minha rede?</summary><p>Coloque um proxy reverso com HTTPS (Caddy, Nginx ou IIS) apontando para a porta do Data Gateway (padrão 8787) e use um domínio. Não exponha a porta do banco de dados.</p></details>
           <details><summary>Ele precisa ficar aberto?</summary><p>Ele fica na bandeja do Windows e pode iniciar junto com o sistema. Com a opção de minimizar para a bandeja ativa, fechar a janela não derruba a API; para encerrar, use <i>Sair</i> no ícone da bandeja.</p></details>
@@ -423,6 +455,6 @@ GET /api/v1/consultas/vendas-por-cliente?desde=2026-01-01</code></pre>
     <p class="zoom-legenda"></p>
   </div>
 
-  <script src="/js/site.js" defer></script>
+  <script src="/js/site.js?v=1.2.0" defer></script>
 </body>
 </html>

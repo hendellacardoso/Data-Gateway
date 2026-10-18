@@ -1,8 +1,8 @@
 {
   "name": "data-gateway",
   "productName": "Data Gateway",
-  "version": "1.1.0",
-  "description": "Transforma bancos de dados existentes em APIs REST seguras, configuradas visualmente.",
+  "version": "1.2.0",
+  "description": "Transforma bancos de dados existentes (SQL Server, PostgreSQL, MySQL, MariaDB, Firebird e SQLite) em APIs REST seguras, configuradas visualmente.",
   "author": {
     "name": "Hendell Alves Cardoso",
     "email": "suporte@api2dev.com.br",
@@ -20,7 +20,7 @@
     "dist": "npm run build:renderer && electron-builder --win",
     "postinstall": "electron-builder install-app-deps",
     "rebuild:node": "npm rebuild better-sqlite3",
-    "test": "node --test tests/gateway.test.js tests/queryBuilder.test.js tests/consultas.test.js tests/externos.test.js"
+    "test": "node --test tests/gateway.test.js tests/queryBuilder.test.js tests/consultas.test.js tests/externos.test.js tests/firebird.test.js"
   },
   "dependencies": {
     "better-sqlite3": "^12.4.1",
@@ -29,6 +29,7 @@
     "mssql": "^11.0.1",
     "multer": "^2.0.2",
     "mysql2": "^3.11.5",
+    "node-firebird": "^2.18.2",
     "pg": "^8.13.1",
     "swagger-ui-dist": "^5.18.2"
   },

@@ -5,7 +5,7 @@ const { GatewayError } = require('../errors');
 const { DRIVERS, inferLogicalType } = require('../drivers');
 const { ConnectionManager } = require('../services/connectionManager');
 
-const ALLOWED_PARAMS = ['trustServerCertificate', 'instanceName', 'rejectUnauthorized', 'poolMax'];
+const ALLOWED_PARAMS = ['trustServerCertificate', 'instanceName', 'rejectUnauthorized', 'poolMax', 'charset', 'role', 'wireCrypt'];
 
 function toApiName(col) {
   let s = String(col).normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9_]/g, '_').toLowerCase();

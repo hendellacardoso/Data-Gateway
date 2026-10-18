@@ -272,6 +272,35 @@ const migrations = [
         UNIQUE (TOKEN_ID, CONSULTA_ID)
       );
     `
+  },
+  {
+    version: 3,
+    name: 'banco_firebird',
+    // Recria GW_BANCO para aceitar o tipo 'firebird' (SQLite não altera CHECK).
+    // Roda com foreign_keys desligado para o DROP não apagar em cascata as tabelas filhas.
+    semChavesEstrangeiras: true,
+    up: `
+      CREATE TABLE GW_BANCO_NOVO (
+        ID            INTEGER PRIMARY KEY AUTOINCREMENT,
+        NOME          TEXT NOT NULL UNIQUE COLLATE NOCASE,
+        TIPO          TEXT NOT NULL CHECK (TIPO IN ('sqlserver','postgres','mysql','mariadb','sqlite','firebird')),
+        SERVIDOR      TEXT,
+        PORTA         INTEGER,
+        BANCO         TEXT,
+        USUARIO       TEXT,
+        SENHA_CRIPT   TEXT,
+        SSL           INTEGER NOT NULL DEFAULT 0,
+        TIMEOUT       INTEGER NOT NULL DEFAULT 15000,
+        ARQUIVO       TEXT,
+        ATIVO         INTEGER NOT NULL DEFAULT 1,
+        CRIADO_EM     TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+        ATUALIZADO_EM TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+      );
+      INSERT INTO GW_BANCO_NOVO (ID, NOME, TIPO, SERVIDOR, PORTA, BANCO, USUARIO, SENHA_CRIPT, SSL, TIMEOUT, ARQUIVO, ATIVO, CRIADO_EM, ATUALIZADO_EM)
+        SELECT ID, NOME, TIPO, SERVIDOR, PORTA, BANCO, USUARIO, SENHA_CRIPT, SSL, TIMEOUT, ARQUIVO, ATIVO, CRIADO_EM, ATUALIZADO_EM FROM GW_BANCO;
+      DROP TABLE GW_BANCO;
+      ALTER TABLE GW_BANCO_NOVO RENAME TO GW_BANCO;
+    `
   }
 ];
 
@@ -286,9 +315,20 @@ function runMigrations(db) {
     if (applied.has(m.version)) continue;
     const tx = db.transaction(() => {
       db.exec(m.up);
+      if (m.semChavesEstrangeiras) {
+        const problemas = db.pragma('foreign_key_check');
+        if (problemas.length) throw new Error(`Migração ${m.version}: referências inválidas após recriar tabelas.`);
+      }
       db.prepare('INSERT INTO GW_MIGRACAO (VERSAO, NOME) VALUES (?, ?)').run(m.version, m.name);
     });
-    tx();
+    // PRAGMA foreign_keys não pode mudar dentro de transação
+    const fkAntes = m.semChavesEstrangeiras ? db.pragma('foreign_keys', { simple: true }) : null;
+    if (m.semChavesEstrangeiras) db.pragma('foreign_keys = OFF');
+    try {
+      tx();
+    } finally {
+      if (m.semChavesEstrangeiras && fkAntes) db.pragma('foreign_keys = ON');
+    }
   }
 }
 

@@ -16,10 +16,11 @@ function BancoForm({ initial, onClose, onSaved }) {
   const set = (k, v) => setF((x) => ({ ...x, [k]: v }));
   const setParam = (k, v) => setF((x) => ({ ...x, parametros: { ...x.parametros, [k]: v } }));
   const isSqlite = f.tipo === 'sqlite';
+  const isFirebird = f.tipo === 'firebird';
 
   const changeType = (tipo) => {
     const t = DB_TYPES.find((d) => d.value === tipo);
-    setF((x) => ({ ...x, tipo, porta: t.port || '' }));
+    setF((x) => ({ ...x, tipo, porta: t.port || '', usuario: tipo === 'firebird' && !x.usuario ? 'SYSDBA' : x.usuario }));
     setTest(null);
   };
 
@@ -69,13 +70,19 @@ function BancoForm({ initial, onClose, onSaved }) {
       ) : (
         <>
           <div className="form-row" style={{ gridTemplateColumns: '3fr 1fr' }}>
-            <Field label="Servidor" hint={f.tipo === 'sqlserver' ? 'Ex.: 192.168.0.10 ou SERVIDOR' : undefined}>
+            <Field label="Servidor" hint={f.tipo === 'sqlserver' ? 'Ex.: 192.168.0.10 ou SERVIDOR' : isFirebird ? 'Ex.: 192.168.0.10 (onde o Firebird está instalado)' : undefined}>
               <Input value={f.servidor} onChange={(e) => set('servidor', e.target.value)} placeholder="localhost" />
             </Field>
             <Field label="Porta"><Input type="number" value={f.porta} onChange={(e) => set('porta', e.target.value)} /></Field>
           </div>
+          {isFirebird && (
+            <Field label="Arquivo do banco (.FDB / .GDB) ou alias"
+              hint="Caminho como o SERVIDOR Firebird enxerga, ex.: C:\Sistema\Dados\SISTEMA.FDB, ou o alias do databases.conf/aliases.conf.">
+              <Input value={f.banco} onChange={(e) => set('banco', e.target.value)} placeholder="C:\Sistema\Dados\SISTEMA.FDB" />
+            </Field>
+          )}
           <div className="form-row three">
-            <Field label="Banco de dados"><Input value={f.banco} onChange={(e) => set('banco', e.target.value)} /></Field>
+            {!isFirebird && <Field label="Banco de dados"><Input value={f.banco} onChange={(e) => set('banco', e.target.value)} /></Field>}
             <Field label="Usuário"><Input value={f.usuario} onChange={(e) => set('usuario', e.target.value)} autoComplete="off" /></Field>
             <Field label="Senha" hint={initial?.temSenha ? 'Deixe em branco para manter a senha atual.' : 'Armazenada criptografada (DPAPI do Windows).'}>
               <Input type="password" value={f.senha} onChange={(e) => set('senha', e.target.value)} autoComplete="new-password" placeholder={initial?.temSenha ? '••••••••' : ''} />
@@ -85,12 +92,23 @@ function BancoForm({ initial, onClose, onSaved }) {
             <Field label="Timeout de conexão (ms)"><Input type="number" value={f.timeout} onChange={(e) => set('timeout', e.target.value)} /></Field>
             <Field label="Conexões simultâneas (pool)"><Input type="number" value={f.parametros.poolMax || ''} placeholder="10" onChange={(e) => setParam('poolMax', e.target.value)} /></Field>
           </div>
+          {isFirebird && (
+            <div className="form-row">
+              <Field label="Charset da conexão" hint="Automático: UTF8, ou WIN1252 quando o banco foi criado com charset NONE (comum em sistemas Delphi). Troque se os acentos aparecerem errados.">
+                <Select value={f.parametros.charset || 'auto'} onChange={(e) => setParam('charset', e.target.value)}
+                  options={[{ value: 'auto', label: 'Automático (recomendado)' }, { value: 'UTF8', label: 'UTF8' }, { value: 'WIN1252', label: 'WIN1252 (Windows Latin 1)' }, { value: 'ISO8859_1', label: 'ISO8859_1 (Latin 1)' }, { value: 'NONE', label: 'NONE (sem conversão)' }]} />
+              </Field>
+              <Field label="Role (opcional)"><Input value={f.parametros.role || ''} onChange={(e) => setParam('role', e.target.value)} /></Field>
+            </div>
+          )}
           <div className="row wrap" style={{ gap: 20 }}>
-            <Checkbox label="SSL / criptografia" checked={f.ssl} onChange={(v) => set('ssl', v)} />
+            {isFirebird
+              ? <Checkbox label="Criptografar conexão (Firebird 3+)" checked={f.parametros.wireCrypt !== 'false'} onChange={(v) => setParam('wireCrypt', v ? 'true' : 'false')} />
+              : <Checkbox label="SSL / criptografia" checked={f.ssl} onChange={(v) => set('ssl', v)} />}
             {f.tipo === 'sqlserver' && (
               <Checkbox label="Confiar no certificado do servidor" checked={f.parametros.trustServerCertificate !== 'false'} onChange={(v) => setParam('trustServerCertificate', v ? 'true' : 'false')} />
             )}
-            {f.tipo !== 'sqlserver' && f.ssl && (
+            {f.tipo !== 'sqlserver' && !isFirebird && f.ssl && (
               <Checkbox label="Validar certificado SSL" checked={f.parametros.rejectUnauthorized === 'true'} onChange={(v) => setParam('rejectUnauthorized', v ? 'true' : 'false')} />
             )}
             <Checkbox label="Conexão ativa" checked={f.ativo} onChange={(v) => set('ativo', v)} />

@@ -67,7 +67,7 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !zoom.hidden) fechar(); });
 
   // ---------------------------------------------------------------- animação de entrada
-  const alvos = $$('.passos li, .cartao, .recurso, .galeria figure, .dl, .faq details, .lista-check li');
+  const alvos = $$('.passos li, .cartao, .recurso, .galeria figure, .dl, .faq details, .lista-check li, .lista-fb li');
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entradas) => {
       for (const en of entradas) {

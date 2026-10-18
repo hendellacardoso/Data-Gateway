@@ -15,6 +15,11 @@ site\
   iniciar-local.bat    roda o site sem serviço, só para testar
 ```
 
+## Só iniciar como serviço
+
+Dê dois cliques em `instalar-servico.bat` (pede Administrador). Cria o serviço do Windows `SiteDataGateway`
+(porta 5010, inicia com o Windows, reinicia se cair), inicia e abre o site no navegador. Pode rodar de novo quando quiser.
+
 ## Publicar
 
 1. Gere os executáveis do aplicativo com `..\gerar-instalador.bat`. Eles vão para `..\release`.

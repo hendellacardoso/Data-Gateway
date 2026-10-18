@@ -48,7 +48,9 @@ function parseInput(campo, v, dbType) {
       else if (TRUE_SET.has(String(v).toLowerCase())) bool = true;
       else if (FALSE_SET.has(String(v).toLowerCase())) bool = false;
       else throw new Error(`O campo ${name} deve ser booleano (true/false).`);
-      if ((dbType === 'postgres' || dbType === 'sqlserver') && isBoolPhysical(campo.tipoFisico)) return bool;
+      if ((dbType === 'postgres' || dbType === 'sqlserver' || dbType === 'firebird') && isBoolPhysical(campo.tipoFisico)) return bool;
+      // Firebird/Delphi: booleano em CHAR(1)/VARCHAR(1) segue o padrão 'S'/'N'
+      if (dbType === 'firebird' && /^(char|varchar)/i.test(String(campo.tipoFisico || ''))) return bool ? 'S' : 'N';
       return bool ? 1 : 0;
     }
     case 'DATA': {

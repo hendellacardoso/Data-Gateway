@@ -41,3 +41,14 @@ test('identificadores maliciosos são escapados e operadores fora da whitelist r
   assert.strictEqual(qb.col('X]; DROP TABLE Y;--'), '[X]]; DROP TABLE Y;--]');
   assert.throws(() => qb.select({ ...spec, filters: [{ column: 'A', operator: 'OR 1=1', value: 1 }] }));
 });
+
+test('Firebird: nomes sem aspas quando possível, LIKE sem diferenciar maiúsculas e ROWS m TO n', () => {
+  const qb = new QueryBuilder('firebird');
+  const q = qb.select({ ...spec, table: { name: 'CLIENTES' } });
+  assert.strictEqual(q.sql, "SELECT ID, NOME FROM CLIENTES WHERE UPPER(NOME) LIKE UPPER(CAST(? AS VARCHAR(1000))) ESCAPE '!' AND ID IN (?, ?) ORDER BY NOME DESC ROWS ? TO ?");
+  assert.deepStrictEqual(q.params.slice(-2), [21, 30]);
+  assert.strictEqual(qb.col('DATA'), 'DATA');
+  assert.strictEqual(qb.col('POSITION'), '"POSITION"', 'palavra reservada');
+  assert.strictEqual(qb.col('NomeMisto'), '"NomeMisto"');
+  assert.strictEqual(qb.col('A"B'), '"A""B"');
+});

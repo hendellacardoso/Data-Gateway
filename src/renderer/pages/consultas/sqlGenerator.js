@@ -3,12 +3,24 @@
  * O resultado passa pela mesma validação do servidor antes de ser executado/publicado.
  */
 
+const FB_RESERVED = new Set(('ADD ALL ALTER AND ANY AS AT AVG BEGIN BETWEEN BIGINT BLOB BOOLEAN BOTH BY CASE CAST CHAR CHARACTER CHECK ' +
+  'CLOSE COLLATE COLUMN COMMIT CONNECT CONSTRAINT COUNT CREATE CROSS CURRENT CURRENT_DATE CURRENT_TIME CURRENT_TIMESTAMP ' +
+  'CURRENT_USER CURSOR DATE DAY DEC DECIMAL DECLARE DEFAULT DELETE DISTINCT DOUBLE DROP ELSE END ESCAPE EXECUTE EXISTS ' +
+  'EXTERNAL EXTRACT FALSE FETCH FILTER FLOAT FOR FOREIGN FROM FULL FUNCTION GLOBAL GRANT GROUP HAVING HOUR IN INDEX INNER ' +
+  'INSERT INT INTEGER INTO IS JOIN LEADING LEFT LIKE LONG LOWER MAX MERGE MIN MINUTE MONTH NATURAL NO NOT NULL NUMERIC OF ' +
+  'OFFSET ON ONLY OPEN OR ORDER OUTER OVER PARAMETER PLAN POSITION PRECISION PRIMARY PROCEDURE REAL RECREATE RECURSIVE ' +
+  'REFERENCES RETURNS REVOKE RIGHT ROLLBACK ROW ROWS SECOND SELECT SET SIMILAR SMALLINT SOME START SUM TABLE THEN TIME ' +
+  'TIMESTAMP TO TRAILING TRIGGER TRIM TRUE UNION UNIQUE UNKNOWN UPDATE UPPER USER USING VALUE VALUES VARCHAR VARIABLE ' +
+  'VARYING VIEW WHEN WHERE WHILE WINDOW WITH YEAR').split(' '));
+
 const QUOTES = {
   sqlserver: (id) => '[' + String(id).replace(/]/g, ']]') + ']',
   postgres: (id) => '"' + String(id).replace(/"/g, '""') + '"',
   mysql: (id) => '`' + String(id).replace(/`/g, '``') + '`',
   mariadb: (id) => '`' + String(id).replace(/`/g, '``') + '`',
-  sqlite: (id) => '"' + String(id).replace(/"/g, '""') + '"'
+  sqlite: (id) => '"' + String(id).replace(/"/g, '""') + '"',
+  // Firebird: sem aspas para nomes simples em maiúsculas (compatível com o dialeto 1)
+  firebird: (id) => (/^[A-Z][A-Z0-9_$]*$/.test(String(id)) && !FB_RESERVED.has(String(id)) ? String(id) : '"' + String(id).replace(/"/g, '""') + '"')
 };
 
 export const AGGREGATES = ['', 'COUNT', 'SUM', 'AVG', 'MIN', 'MAX'];

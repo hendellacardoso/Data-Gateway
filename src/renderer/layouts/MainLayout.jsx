@@ -64,7 +64,7 @@ export default function MainLayout() {
             ))}
           </div>
         ))}
-        <NavLink to="/sistema/sobre" className="sidebar-footer">Data Gateway 1.1.0 · API2Dev</NavLink>
+        <NavLink to="/sistema/sobre" className="sidebar-footer">Data Gateway 1.2.0 · API2Dev</NavLink>
       </aside>
       <div className="main">
         <header className="topbar">

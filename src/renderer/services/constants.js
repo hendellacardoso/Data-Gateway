@@ -34,6 +34,7 @@ export const DB_TYPES = [
   { value: 'postgres', label: 'PostgreSQL', port: 5432 },
   { value: 'mysql', label: 'MySQL', port: 3306 },
   { value: 'mariadb', label: 'MariaDB', port: 3306 },
+  { value: 'firebird', label: 'Firebird', port: 3050 },
   { value: 'sqlite', label: 'SQLite', port: null }
 ];
 

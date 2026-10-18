@@ -4,6 +4,7 @@ const { SqlServerDriver } = require('./SqlServerDriver');
 const { PostgresDriver } = require('./PostgresDriver');
 const { MySqlDriver } = require('./MySqlDriver');
 const { SqliteDriver } = require('./SqliteDriver');
+const { FirebirdDriver } = require('./FirebirdDriver');
 
 /**
  * Registro de drivers. Para adicionar um novo banco:
@@ -16,7 +17,8 @@ const DRIVERS = {
   postgres:  { label: 'PostgreSQL', cls: PostgresDriver, defaultPort: 5432 },
   mysql:     { label: 'MySQL', cls: MySqlDriver, defaultPort: 3306 },
   mariadb:   { label: 'MariaDB', cls: MySqlDriver, defaultPort: 3306 },
-  sqlite:    { label: 'SQLite', cls: SqliteDriver, defaultPort: null }
+  sqlite:    { label: 'SQLite', cls: SqliteDriver, defaultPort: null },
+  firebird:  { label: 'Firebird', cls: FirebirdDriver, defaultPort: 3050 }
 };
 
 function createDriver(config) {
@@ -32,6 +34,9 @@ const LOGICAL_TYPES = ['TEXTO', 'NUMERO', 'INTEIRO', 'DECIMAL', 'BOOLEANO', 'DAT
 function inferLogicalType(dataType) {
   const t = String(dataType || '').toLowerCase();
   if (t === 'tinyint(1)' || /^(bit|bool|boolean)$/.test(t)) return 'BOOLEANO';
+  if (/^blob sub_type (text|1)$/.test(t)) return 'TEXTO';
+  if (/^decfloat/.test(t)) return 'NUMERO';
+  if (/^timestamp with time zone$/.test(t)) return 'DATAHORA';
   if (/^(tinyint|smallint|mediumint|int|integer|bigint|int2|int4|int8|serial|bigserial|smallserial)/.test(t)) return 'INTEIRO';
   if (/^(decimal|numeric|money|smallmoney)/.test(t)) return 'DECIMAL';
   if (/^(float|real|double|float4|float8)/.test(t)) return 'NUMERO';

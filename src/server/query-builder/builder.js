@@ -56,6 +56,12 @@ class QueryBuilder {
     return this.dialect.quote(c);
   }
 
+  /** Placeholders de paginação na ordem em que aparecem no SQL do dialeto. */
+  pageParams(params, size, offset) {
+    if (this.dialect.pageParams) return this.dialect.pageParams(params, size, offset);
+    return { limit: params.add(size), offset: params.add(offset) };
+  }
+
   /** Monta cláusula WHERE a partir de filtros [{column, operator, value}] */
   where(filters, params) {
     const parts = [];
@@ -73,8 +79,13 @@ class QueryBuilder {
         if (items.length > MAX_IN_ITEMS) throw new Error(`Máximo de ${MAX_IN_ITEMS} valores no filtro.`);
         parts.push(`${c} IN (${items.map((v) => params.add(v)).join(', ')})`);
       } else if (op.like) {
-        const expr = this.dialect.textCast ? this.dialect.textCast(c) : c;
-        parts.push(`${expr} ${this.dialect.likeOp} ${params.add(op.like(f.value))}${this.dialect.likeEscapeClause}`);
+        const ph = params.add(op.like(f.value));
+        if (this.dialect.likeExpr) {
+          parts.push(`${this.dialect.likeExpr(c, ph)}${this.dialect.likeEscapeClause}`);
+        } else {
+          const expr = this.dialect.textCast ? this.dialect.textCast(c) : c;
+          parts.push(`${expr} ${this.dialect.likeOp} ${ph}${this.dialect.likeEscapeClause}`);
+        }
       } else {
         parts.push(`${c} ${op.sql} ${params.add(f.value)}`);
       }
@@ -106,8 +117,7 @@ class QueryBuilder {
     if (pagination) {
       const page = Math.max(1, pagination.page | 0);
       const size = Math.max(1, pagination.pageSize | 0);
-      const ph = { limit: params.add(size), offset: params.add((page - 1) * size) };
-      sql = this.dialect.paginate(sql, this.orderBy(orderBy), ph);
+      sql = this.dialect.paginate(sql, this.orderBy(orderBy), this.pageParams(params, size, (page - 1) * size));
     } else if (orderBy && orderBy.length) {
       sql += ' ' + this.orderBy(orderBy);
     }
@@ -128,8 +138,7 @@ class QueryBuilder {
     const filters = [{ column, operator: 'in', value: values }, ...(extraFilters || [])];
     let sql = `SELECT ${fields.map((f) => this.col(f)).join(', ')} FROM ${this.table(table)}${this.where(filters, params)}`;
     if (limit) {
-      const ph = { limit: params.add(limit), offset: params.add(0) };
-      sql = this.dialect.paginate(sql, this.orderBy([{ column, direction: 'ASC' }]), ph);
+      sql = this.dialect.paginate(sql, this.orderBy([{ column, direction: 'ASC' }]), this.pageParams(params, limit, 0));
     }
     return { sql, params: params.values };
   }
