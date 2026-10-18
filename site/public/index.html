@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/site.css?v=1.2.0">
+  <link rel="stylesheet" href="/css/site.css?v=1.2.2">
 </head>
 <body>
   <header class="topo" id="topo">
@@ -61,6 +61,10 @@
             </a>
             <a href="#download" class="btn btn-lg btn-contorno">Ver opções de download</a>
           </div>
+          <p class="contador-dl" data-contador hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+            <span><b data-downloads>97</b> downloads realizados</span>
+          </p>
           <ul class="hero-bancos" aria-label="Bancos suportados">
             <li>SQL Server</li><li>PostgreSQL</li><li>MySQL</li><li>MariaDB</li><li class="novo">Firebird</li><li>SQLite</li>
           </ul>
@@ -274,6 +278,7 @@
           <p>Clique para ampliar.</p>
         </header>
         <div class="galeria">
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/19-firebird-conexao.webp" alt="Conexão Firebird testada com sucesso" width="1600" height="960"></button><figcaption>Firebird — conexão testada (dialeto e charset detectados)</figcaption></figure>
           <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/20-firebird-campos.webp" alt="Campos de uma tabela Firebird no assistente" width="1600" height="960"></button><figcaption>Firebird — campos detectados (generator, CHAR “S/N”)</figcaption></figure>
           <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/22-firebird-testador.webp" alt="Testador de API com dados vindos do Firebird" width="1600" height="960"></button><figcaption>Firebird — JSON com acentos e datas corretas</figcaption></figure>
           <figure><button type="button" data-zoom><img loading="lazy" src="/img/prints/21-firebird-consulta.webp" alt="Consulta SQL no Firebird" width="1600" height="960"></button><figcaption>Firebird — consulta SQL com JOIN</figcaption></figure>
@@ -358,6 +363,10 @@ GET /api/v1/consultas/vendas-por-cliente?desde=2026-01-01</code></pre>
           <span class="sobretitulo">Download gratuito</span>
           <h2>Baixe o Data Gateway <span data-versao>v1.2.0</span></h2>
           <p>Para Windows 10 e 11 (64 bits). Não precisa instalar Node.js, banco ou qualquer outro programa.</p>
+          <p class="contador-dl contador-dl-centro" data-contador hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+            <span>Já são <b data-downloads>97</b> downloads</span>
+          </p>
         </header>
         <div class="downloads">
           <article class="dl" data-tipo="instalador">
@@ -449,12 +458,15 @@ GET /api/v1/consultas/vendas-por-cliente?desde=2026-01-01</code></pre>
     </div>
   </footer>
 
-  <div class="zoom" hidden>
+  <div class="zoom" hidden role="dialog" aria-modal="true" aria-label="Telas do Data Gateway">
     <button type="button" class="zoom-fechar" aria-label="Fechar">×</button>
+    <button type="button" class="zoom-nav zoom-ant" aria-label="Tela anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
     <img alt="">
+    <button type="button" class="zoom-nav zoom-prox" aria-label="Próxima tela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
     <p class="zoom-legenda"></p>
+    <p class="zoom-contador"></p>
   </div>
 
-  <script src="/js/site.js?v=1.2.0" defer></script>
+  <script src="/js/site.js?v=1.2.2" defer></script>
 </body>
 </html>

@@ -38,6 +38,17 @@ Dê dois cliques em `instalar-servico.bat` (pede Administrador). Cria o serviço
 
 O DNS de `api2dev.com.br` e de `www.api2dev.com.br` precisa apontar para este servidor. Se você usa a Cloudflare, o IP real do visitante é repassado.
 
+## Contador de downloads
+
+O site mostra o total de downloads no topo e na seção de download. O total exibido é a soma de `inicial` com os downloads contados pelo servidor, que ficam em `dados\downloads.json`:
+
+```json
+{ "inicial": 97, "instalador": 0, "portatil": 0 }
+```
+
+- `inicial`: o número de partida, 97 por padrão. Pode ser ajustado no arquivo; depois reinicie o serviço com `deploy\servico.bat`.
+- `instalador` e `portatil`: downloads reais. Cada IP conta no máximo uma vez por arquivo a cada 24 horas, para que cliques repetidos e downloads retomados não inflem o número.
+
 ## Outros comandos
 
 - `deploy\caddy.bat`: só refaz a configuração do Caddy.

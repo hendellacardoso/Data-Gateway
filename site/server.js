@@ -125,26 +125,52 @@ function listarArquivos() {
 }
 
 // ------------------------------------------------------------------ contador de downloads
-let contagem = { instalador: 0, portatil: 0 };
+// dados/downloads.json: { "inicial": 97, "instalador": N, "portatil": N }
+//   inicial    → valor de partida exibido no site (ajuste à vontade no arquivo; padrão 97)
+//   instalador/portatil → downloads reais contados pelo servidor
+// Total exibido = inicial + instalador + portatil. Cada IP conta no máximo 1 vez por arquivo a cada 24 h.
+const INICIAL_PADRAO = Number(process.env.DOWNLOADS_INICIAL || 97);
+let contagem = { inicial: INICIAL_PADRAO, instalador: 0, portatil: 0 };
 try {
   contagem = Object.assign(contagem, JSON.parse(fs.readFileSync(CONTADOR, 'utf8')));
 } catch {
   /* primeiro uso */
 }
+const totalDownloads = () => (Number(contagem.inicial) || 0) + (Number(contagem.instalador) || 0) + (Number(contagem.portatil) || 0);
+
 let gravacaoPendente = null;
-function contar(tipo) {
+function gravarContador() {
+  try {
+    fs.mkdirSync(DADOS, { recursive: true });
+    fs.writeFileSync(CONTADOR + '.tmp', JSON.stringify(contagem, null, 2));
+    fs.renameSync(CONTADOR + '.tmp', CONTADOR);
+  } catch (e) {
+    log('Falha ao gravar contador:', e.message);
+  }
+}
+// grava já na primeira execução, para o arquivo mostrar o campo "inicial"
+try {
+  if (!fs.existsSync(CONTADOR) || !('inicial' in JSON.parse(fs.readFileSync(CONTADOR, 'utf8') || '{}'))) gravarContador();
+} catch {
+  gravarContador();
+}
+
+const vistos = new Map(); // hash(ip|tipo) -> momento do último download contado
+const DIA = 24 * 60 * 60 * 1000;
+function ipDoVisitante(req) {
+  // Caddy repassa o IP real (Cloudflare → X-Cliente-IP; sem Cloudflare → X-Forwarded-For)
+  const h = req.headers['x-cliente-ip'] || String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return h || req.socket.remoteAddress || '';
+}
+function contar(req, tipo) {
+  const chave = crypto.createHash('sha256').update(ipDoVisitante(req) + '|' + tipo).digest('hex').slice(0, 24);
+  const agora = Date.now();
+  if (vistos.has(chave) && agora - vistos.get(chave) < DIA) return;
+  vistos.set(chave, agora);
+  if (vistos.size > 50000) for (const [k, t] of vistos) if (agora - t >= DIA) vistos.delete(k);
   contagem[tipo] = (Number(contagem[tipo]) || 0) + 1;
   if (gravacaoPendente) return;
-  gravacaoPendente = setTimeout(() => {
-    gravacaoPendente = null;
-    try {
-      fs.mkdirSync(DADOS, { recursive: true });
-      fs.writeFileSync(CONTADOR + '.tmp', JSON.stringify(contagem, null, 2));
-      fs.renameSync(CONTADOR + '.tmp', CONTADOR);
-    } catch (e) {
-      log('Falha ao gravar contador:', e.message);
-    }
-  }, 2000);
+  gravacaoPendente = setTimeout(() => { gravacaoPendente = null; gravarContador(); }, 2000);
 }
 
 // ------------------------------------------------------------------ respostas
@@ -183,7 +209,7 @@ async function apiVersao(res) {
     });
   }
   const versao = arquivos.map((a) => a.versao).sort(compararVersao).pop() || null;
-  json(res, 200, { produto: 'Data Gateway', versao, arquivos, downloads: contagem.instalador + contagem.portatil });
+  json(res, 200, { produto: 'Data Gateway', versao, arquivos, downloads: totalDownloads() });
 }
 
 function enviarDownload(req, res, tipo) {
@@ -194,7 +220,7 @@ function enviarDownload(req, res, tipo) {
     'Content-Type': 'application/vnd.microsoft.portable-executable',
     'Content-Disposition': `attachment; filename="${a.nome}"`,
     'Accept-Ranges': 'bytes',
-    'Cache-Control': 'public, max-age=3600',
+    'Cache-Control': 'no-store', // sempre passa pelo servidor (Cloudflare não guarda) → contagem correta
     'Last-Modified': a.st.mtime.toUTCString(),
     ETag: `"${a.st.size.toString(16)}-${Math.floor(a.st.mtimeMs).toString(16)}"`
   };
@@ -216,12 +242,13 @@ function enviarDownload(req, res, tipo) {
     }
     res.writeHead(206, { ...cab, 'Content-Range': `bytes ${ini}-${fim}/${tamanho}`, 'Content-Length': fim - ini + 1 });
     if (req.method === 'HEAD') return res.end();
+    if (ini === 0) contar(req, tipo); // gerenciadores de download começam com Range: bytes=0-
     return fs.createReadStream(a.caminho, { start: ini, end: fim }).on('error', () => res.destroy()).pipe(res);
   }
 
   res.writeHead(200, { ...cab, 'Content-Length': tamanho });
   if (req.method === 'HEAD') return res.end();
-  contar(tipo);
+  contar(req, tipo);
   log('download', tipo, a.nome);
   fs.createReadStream(a.caminho).on('error', () => res.destroy()).pipe(res);
 }
@@ -298,7 +325,7 @@ function encerrar() {
     clearTimeout(gravacaoPendente);
     try {
       fs.mkdirSync(DADOS, { recursive: true });
-      fs.writeFileSync(CONTADOR, JSON.stringify(contagem, null, 2));
+      gravarContador();
     } catch {
       /* ignora */
     }
