@@ -2,6 +2,8 @@
   'use strict';
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+  // cada página informa a sua API de versão em <body data-api="..."> (padrão: Data Gateway)
+  const API_VERSAO = document.body.dataset.api || '/api/versao';
 
   // ---------------------------------------------------------------- topo e menu
   const topo = $('.topo');
@@ -40,7 +42,7 @@
   }
   // atualiza o número logo depois que o visitante clica em baixar
   $$('a[href^="/download/"]').forEach((a) => a.addEventListener('click', () => {
-    setTimeout(() => fetch('/api/versao', { cache: 'no-store' }).then((r) => r.json()).then((i) => {
+    setTimeout(() => fetch(API_VERSAO, { cache: 'no-store' }).then((r) => r.json()).then((i) => {
       if (Number.isFinite(i.downloads)) $$('[data-downloads]').forEach((el) => { el.textContent = fmt.format(i.downloads); });
     }).catch(() => {}), 3000);
   }));
@@ -48,7 +50,7 @@
   // ---------------------------------------------------------------- versão e arquivos
   const formatarTamanho = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.ceil(b / 1024) + ' KB');
 
-  fetch('/api/versao', { cache: 'no-store' })
+  fetch(API_VERSAO, { cache: 'no-store' })
     .then((r) => (r.ok ? r.json() : null))
     .then((info) => {
       if (!info) return;

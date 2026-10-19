@@ -299,3 +299,14 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   .contato-links .btn { width: 100%; white-space: normal; }
   .aviso { flex-direction: column; }
 }
+
+/* ============================================================ PÁGINA API2Dev Backup (/backup) */
+.grade-4 { grid-template-columns: repeat(4, 1fr); }
+.pg-backup .icone.bk-sql { background: #fee2e2; color: #dc2626; }
+.pg-backup .icone.bk-pg { background: #dbeafe; color: #2563eb; }
+.pg-backup .icone.bk-my { background: #ffedd5; color: #ea580c; }
+.pg-backup .icone.bk-ora { background: #fce7f3; color: #be185d; }
+.pg-backup .bk-bancos .cartao p { font-size: 14.5px; }
+.pg-backup .guia-lista { max-width: 860px; margin: 0 auto; }
+@media (max-width: 1080px) { .grade-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .grade-4 { grid-template-columns: 1fr; } }

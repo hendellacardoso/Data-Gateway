@@ -60,3 +60,28 @@ O site mostra o total de downloads no topo e na seção de download. O total exi
 
 Atualize a versão no `package.json` do aplicativo, rode `gerar-instalador.bat` e depois `site\deploy\publicar.bat`.
 O site mostra automaticamente a versão, o tamanho e o SHA-256 dos arquivos que estão em `downloads`.
+
+## Página do API2Dev Backup (https://api2dev.com.br/backup)
+
+A página fica em `public\backup\index.html` e as telas em `public\img\backup\`. O servidor atende:
+
+- `/backup` → página do API2Dev Backup
+- `/api/backup/versao` → versão, arquivos (tamanho e SHA-256) e total de downloads
+- `/download/backup/instalador` → `downloads\API2Dev-Backup-Setup-<versão>.exe`
+- `/download/backup/portatil` → `downloads\API2Dev-Backup-Portatil-<versão>.exe`
+
+### Publicar uma versão do Backup
+
+1. No projeto do Backup, rode `C:\Sistema de Backup\gerar-tudo.bat`. Os executáveis vão para `C:\Sistema de Backup\release`.
+2. Dê dois cliques em `site\deploy\publicar-backup.bat`. Ele copia os .exe para `downloads` (versões antigas vão para `downloads\antigos`),
+   reinicia o serviço `SiteDataGateway` e testa a API. Para usar outra pasta de origem: `publicar-backup.bat "C:\pasta"`.
+
+### Contador de downloads do Backup
+
+Fica em `dados\downloads-backup.json`, separado do contador do Data Gateway:
+
+```json
+{ "inicial": 32, "instalador": 0, "portatil": 0 }
+```
+
+`inicial` começa em 32. As mesmas regras valem: cada IP conta no máximo uma vez por arquivo a cada 24 horas.

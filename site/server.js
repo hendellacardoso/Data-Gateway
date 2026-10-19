@@ -9,6 +9,11 @@
  *   /download/portatil     baixa DataGateway-Portable-<versão>.exe (conta o download)
  *   /saude                 teste de funcionamento (usado pelo publicar.bat)
  *
+ *   /backup                       página do API2Dev Backup (public/backup/)
+ *   /api/backup/versao            versão e arquivos do API2Dev Backup
+ *   /download/backup/instalador   baixa API2Dev-Backup-Setup-<versão>.exe    (conta o download)
+ *   /download/backup/portatil     baixa API2Dev-Backup-Portatil-<versão>.exe (conta o download)
+ *
  * Variáveis opcionais: PORT (padrão 5010), HOST (padrão 127.0.0.1)
  */
 const http = require('http');
@@ -22,7 +27,6 @@ const RAIZ = __dirname;
 const PUBLIC = path.join(RAIZ, 'public');
 const DOWNLOADS = path.join(RAIZ, 'downloads');
 const DADOS = path.join(RAIZ, 'dados');
-const CONTADOR = path.join(DADOS, 'downloads.json');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -65,9 +69,28 @@ function log(...a) {
 }
 
 // ------------------------------------------------------------------ arquivos para download
-const TIPOS = {
-  instalador: { padrao: /^DataGateway-Setup-(\d+\.\d+\.\d+)\.exe$/i, titulo: 'Instalador' },
-  portatil: { padrao: /^DataGateway-Portable-(\d+\.\d+\.\d+)\.exe$/i, titulo: 'Portátil' }
+// Cada produto tem os seus executáveis (em downloads/) e o seu próprio contador (em dados/).
+const PRODUTOS = {
+  gateway: {
+    nome: 'Data Gateway',
+    contador: path.join(DADOS, 'downloads.json'),
+    inicial: Number(process.env.DOWNLOADS_INICIAL || 97),
+    tipos: {
+      instalador: { padrao: /^DataGateway-Setup-(\d+\.\d+\.\d+)\.exe$/i, titulo: 'Instalador' },
+      portatil: { padrao: /^DataGateway-Portable-(\d+\.\d+\.\d+)\.exe$/i, titulo: 'Portátil' }
+    },
+    prefixoUrl: '/download/'
+  },
+  backup: {
+    nome: 'API2Dev Backup',
+    contador: path.join(DADOS, 'downloads-backup.json'),
+    inicial: Number(process.env.DOWNLOADS_INICIAL_BACKUP || 32),
+    tipos: {
+      instalador: { padrao: /^API2Dev-Backup-Setup-(\d+\.\d+\.\d+)\.exe$/i, titulo: 'Instalador' },
+      portatil: { padrao: /^API2Dev-Backup-Portatil-(\d+\.\d+\.\d+)\.exe$/i, titulo: 'Portátil' }
+    },
+    prefixoUrl: '/download/backup/'
+  }
 };
 
 const cacheHash = new Map(); // caminho -> { mtimeMs, size, sha256 }
@@ -95,8 +118,9 @@ function sha256Arquivo(caminho, st) {
   });
 }
 
-/** Retorna o arquivo mais novo de cada tipo encontrado em downloads/. */
-function listarArquivos() {
+/** Retorna o arquivo mais novo de cada tipo (do produto) encontrado em downloads/. */
+function listarArquivos(produto) {
+  const TIPOS = PRODUTOS[produto].tipos;
   let nomes = [];
   try {
     nomes = fs.readdirSync(DOWNLOADS);
@@ -125,52 +149,61 @@ function listarArquivos() {
 }
 
 // ------------------------------------------------------------------ contador de downloads
-// dados/downloads.json: { "inicial": 97, "instalador": N, "portatil": N }
-//   inicial    → valor de partida exibido no site (ajuste à vontade no arquivo; padrão 97)
+// Um arquivo por produto:
+//   dados/downloads.json         Data Gateway   { "inicial": 97, "instalador": N, "portatil": N }
+//   dados/downloads-backup.json  API2Dev Backup { "inicial": 32, "instalador": N, "portatil": N }
+//   inicial    → valor de partida exibido no site (ajuste à vontade no arquivo)
 //   instalador/portatil → downloads reais contados pelo servidor
 // Total exibido = inicial + instalador + portatil. Cada IP conta no máximo 1 vez por arquivo a cada 24 h.
-const INICIAL_PADRAO = Number(process.env.DOWNLOADS_INICIAL || 97);
-let contagem = { inicial: INICIAL_PADRAO, instalador: 0, portatil: 0 };
-try {
-  contagem = Object.assign(contagem, JSON.parse(fs.readFileSync(CONTADOR, 'utf8')));
-} catch {
-  /* primeiro uso */
-}
-const totalDownloads = () => (Number(contagem.inicial) || 0) + (Number(contagem.instalador) || 0) + (Number(contagem.portatil) || 0);
+const contagens = {};
+const gravacoesPendentes = {};
 
-let gravacaoPendente = null;
-function gravarContador() {
+function gravarContador(produto) {
+  const arq = PRODUTOS[produto].contador;
   try {
     fs.mkdirSync(DADOS, { recursive: true });
-    fs.writeFileSync(CONTADOR + '.tmp', JSON.stringify(contagem, null, 2));
-    fs.renameSync(CONTADOR + '.tmp', CONTADOR);
+    fs.writeFileSync(arq + '.tmp', JSON.stringify(contagens[produto], null, 2));
+    fs.renameSync(arq + '.tmp', arq);
   } catch (e) {
-    log('Falha ao gravar contador:', e.message);
+    log('Falha ao gravar contador:', produto, e.message);
   }
 }
-// grava já na primeira execução, para o arquivo mostrar o campo "inicial"
-try {
-  if (!fs.existsSync(CONTADOR) || !('inicial' in JSON.parse(fs.readFileSync(CONTADOR, 'utf8') || '{}'))) gravarContador();
-} catch {
-  gravarContador();
+
+for (const [produto, def] of Object.entries(PRODUTOS)) {
+  contagens[produto] = { inicial: def.inicial, instalador: 0, portatil: 0 };
+  let lido = null;
+  try {
+    lido = JSON.parse(fs.readFileSync(def.contador, 'utf8'));
+    Object.assign(contagens[produto], lido);
+  } catch {
+    /* primeiro uso */
+  }
+  // grava já na primeira execução, para o arquivo mostrar o campo "inicial"
+  if (!lido || !('inicial' in lido)) gravarContador(produto);
 }
 
-const vistos = new Map(); // hash(ip|tipo) -> momento do último download contado
+const totalDownloads = (produto) => {
+  const c = contagens[produto];
+  return (Number(c.inicial) || 0) + (Number(c.instalador) || 0) + (Number(c.portatil) || 0);
+};
+
+const vistos = new Map(); // hash(ip|produto|tipo) -> momento do último download contado
 const DIA = 24 * 60 * 60 * 1000;
 function ipDoVisitante(req) {
   // Caddy repassa o IP real (Cloudflare → X-Cliente-IP; sem Cloudflare → X-Forwarded-For)
   const h = req.headers['x-cliente-ip'] || String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
   return h || req.socket.remoteAddress || '';
 }
-function contar(req, tipo) {
-  const chave = crypto.createHash('sha256').update(ipDoVisitante(req) + '|' + tipo).digest('hex').slice(0, 24);
+function contar(req, produto, tipo) {
+  const chave = crypto.createHash('sha256').update(ipDoVisitante(req) + '|' + produto + '|' + tipo).digest('hex').slice(0, 24);
   const agora = Date.now();
   if (vistos.has(chave) && agora - vistos.get(chave) < DIA) return;
   vistos.set(chave, agora);
   if (vistos.size > 50000) for (const [k, t] of vistos) if (agora - t >= DIA) vistos.delete(k);
-  contagem[tipo] = (Number(contagem[tipo]) || 0) + 1;
-  if (gravacaoPendente) return;
-  gravacaoPendente = setTimeout(() => { gravacaoPendente = null; gravarContador(); }, 2000);
+  const c = contagens[produto];
+  c[tipo] = (Number(c[tipo]) || 0) + 1;
+  if (gravacoesPendentes[produto]) return;
+  gravacoesPendentes[produto] = setTimeout(() => { gravacoesPendentes[produto] = null; gravarContador(produto); }, 2000);
 }
 
 // ------------------------------------------------------------------ respostas
@@ -185,8 +218,10 @@ function texto(res, status, msg) {
   res.end(msg);
 }
 
-async function apiVersao(res) {
-  const achados = listarArquivos();
+async function apiVersao(res, produto) {
+  const def = PRODUTOS[produto];
+  const TIPOS = def.tipos;
+  const achados = listarArquivos(produto);
   const arquivos = [];
   for (const tipo of Object.keys(TIPOS)) {
     const a = achados[tipo];
@@ -205,15 +240,15 @@ async function apiVersao(res) {
       tamanho: a.st.size,
       atualizadoEm: a.st.mtime.toISOString(),
       sha256,
-      url: '/download/' + tipo
+      url: def.prefixoUrl + tipo
     });
   }
   const versao = arquivos.map((a) => a.versao).sort(compararVersao).pop() || null;
-  json(res, 200, { produto: 'Data Gateway', versao, arquivos, downloads: totalDownloads() });
+  json(res, 200, { produto: def.nome, versao, arquivos, downloads: totalDownloads(produto) });
 }
 
-function enviarDownload(req, res, tipo) {
-  const a = listarArquivos()[tipo];
+function enviarDownload(req, res, produto, tipo) {
+  const a = listarArquivos(produto)[tipo];
   if (!a) return texto(res, 404, 'Arquivo ainda não publicado. Tente novamente mais tarde.');
   const tamanho = a.st.size;
   const cab = {
@@ -242,18 +277,18 @@ function enviarDownload(req, res, tipo) {
     }
     res.writeHead(206, { ...cab, 'Content-Range': `bytes ${ini}-${fim}/${tamanho}`, 'Content-Length': fim - ini + 1 });
     if (req.method === 'HEAD') return res.end();
-    if (ini === 0) contar(req, tipo); // gerenciadores de download começam com Range: bytes=0-
+    if (ini === 0) contar(req, produto, tipo); // gerenciadores de download começam com Range: bytes=0-
     return fs.createReadStream(a.caminho, { start: ini, end: fim }).on('error', () => res.destroy()).pipe(res);
   }
 
   res.writeHead(200, { ...cab, 'Content-Length': tamanho });
   if (req.method === 'HEAD') return res.end();
-  contar(req, tipo);
-  log('download', tipo, a.nome);
+  contar(req, produto, tipo);
+  log('download', produto, tipo, a.nome);
   fs.createReadStream(a.caminho).on('error', () => res.destroy()).pipe(res);
 }
 
-function enviarEstatico(req, res, urlPath) {
+function enviarEstatico(req, res, urlPath, versionado) {
   let rel;
   try {
     rel = decodeURIComponent(urlPath);
@@ -274,10 +309,13 @@ function enviarEstatico(req, res, urlPath) {
     }
     const ext = path.extname(caminho).toLowerCase();
     const etag = `"${st.size.toString(16)}-${Math.floor(st.mtimeMs).toString(16)}"`;
-    const imutavel = /^\/(img|css|js)\//.test(rel) && ext !== '.html';
+    // Cache longo só para arquivos com ?v=... no endereço (CSS/JS versionados).
+    // Os demais (inclusive imagens que podem ser substituídas com o mesmo nome) são revalidados
+    // a cada acesso pelo ETag — resposta 304 rápida, e a troca do arquivo aparece na hora.
+    const imutavel = versionado && /^\/(img|css|js)\//.test(rel) && ext !== '.html';
     const cab = {
       'Content-Type': MIME[ext] || 'application/octet-stream',
-      'Cache-Control': imutavel ? 'public, max-age=86400' : 'no-cache',
+      'Cache-Control': imutavel ? 'public, max-age=604800' : 'no-cache',
       ETag: etag,
       'Last-Modified': st.mtime.toUTCString()
     };
@@ -307,13 +345,22 @@ const servidor = http.createServer((req, res) => {
   const p = url.pathname;
 
   if (p === '/saude') return json(res, 200, { ok: true, servico: 'site-datagateway', hora: new Date().toISOString() });
-  if (p === '/api/versao') return apiVersao(res).catch(() => json(res, 500, { erro: 'Falha ao ler os arquivos.' }));
-  if (p === '/download/instalador' || p === '/download/portatil') return enviarDownload(req, res, p.split('/')[2]);
+  if (p === '/api/versao') return apiVersao(res, 'gateway').catch(() => json(res, 500, { erro: 'Falha ao ler os arquivos.' }));
+  if (p === '/download/instalador' || p === '/download/portatil') return enviarDownload(req, res, 'gateway', p.split('/')[2]);
+
+  // ---- API2Dev Backup
+  if (p === '/api/backup/versao') return apiVersao(res, 'backup').catch(() => json(res, 500, { erro: 'Falha ao ler os arquivos.' }));
+  if (p === '/download/backup/instalador' || p === '/download/backup/portatil') return enviarDownload(req, res, 'backup', p.split('/')[3]);
+  if (p === '/download/backup' || p === '/download/backup/') {
+    res.writeHead(302, { Location: '/backup#download' });
+    return res.end();
+  }
+  if (p === '/backup' || p === '/backup/index.html') return enviarEstatico(req, res, '/backup/', false);
   if (p === '/download' || p === '/download/') {
     res.writeHead(302, { Location: '/#download' });
     return res.end();
   }
-  return enviarEstatico(req, res, p);
+  return enviarEstatico(req, res, p, url.searchParams.has('v'));
 });
 
 servidor.on('clientError', (err, socket) => socket.destroy());
@@ -321,14 +368,11 @@ servidor.listen(PORT, HOST, () => log(`Site Data Gateway em http://${HOST}:${POR
 
 function encerrar() {
   log('Encerrando...');
-  if (gravacaoPendente) {
-    clearTimeout(gravacaoPendente);
-    try {
-      fs.mkdirSync(DADOS, { recursive: true });
-      gravarContador();
-    } catch {
-      /* ignora */
-    }
+  for (const produto of Object.keys(PRODUTOS)) {
+    if (!gravacoesPendentes[produto]) continue;
+    clearTimeout(gravacoesPendentes[produto]);
+    gravacoesPendentes[produto] = null;
+    gravarContador(produto);
   }
   servidor.close(() => process.exit(0));
   setTimeout(() => process.exit(0), 3000).unref();

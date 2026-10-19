@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API2Dev Backup — backups automáticos de SQL Server, PostgreSQL, MySQL e Oracle | API2Dev</title>
+  <meta name="description" content="API2Dev Backup é um aplicativo para Windows que faz backups automáticos e agendados de SQL Server, PostgreSQL, MySQL e Oracle, com ZIP protegido por senha, envio para Google Drive e FTP, notificação por e-mail e restauração em poucos cliques.">
+  <meta name="theme-color" content="#0b1224">
+  <link rel="icon" type="image/png" href="/img/backup/favicon.png">
+  <link rel="canonical" href="https://api2dev.com.br/backup">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="API2Dev Backup — backups automáticos dos seus bancos de dados">
+  <meta property="og:description" content="SQL Server, PostgreSQL, MySQL e Oracle. Agendamento, ZIP com senha, Google Drive, FTP, e-mail, histórico e restauração. Roda na bandeja ou como serviço do Windows.">
+  <meta property="og:image" content="https://api2dev.com.br/img/backup/01-painel.webp">
+  <meta property="og:url" content="https://api2dev.com.br/backup">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/site.css?v=1.2.3">
+</head>
+<body class="pg-backup" data-api="/api/backup/versao">
+  <header class="topo" id="topo">
+    <div class="container topo-in">
+      <a href="/backup" class="marca" aria-label="API2Dev Backup - início">
+        <img src="/img/backup/icone.png" alt="" width="38" height="38">
+        <span><b>API2Dev Backup</b><small>por API2Dev</small></span>
+      </a>
+      <button class="menu-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="menu" class="menu">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#telas">Telas</a>
+        <a href="#primeiros-passos">Primeiros passos</a>
+        <a href="#duvidas">Dúvidas</a>
+        <a href="/">Data Gateway</a>
+        <a href="#download" class="btn btn-sm btn-primario">Baixar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================================================ HERO -->
+    <section class="hero">
+      <div class="hero-brilho" aria-hidden="true"></div>
+      <div class="container hero-in">
+        <div class="hero-texto">
+          <span class="selo"><span class="ponto"></span> Windows 10/11 · <span data-versao>v1.0.0</span></span>
+          <h1>Backups dos seus bancos de dados <span class="grad">no automático</span>, todo dia, sem esquecer.</h1>
+          <p class="lead">O <b>API2Dev Backup</b> agenda e executa backups de <b>SQL Server, PostgreSQL, MySQL e Oracle</b>,
+            compacta em ZIP com senha, envia para o <b>Google Drive</b> e para <b>FTP</b>, avisa por <b>e-mail</b>
+            e guarda o histórico para você <b>restaurar</b> em poucos cliques.</p>
+          <div class="hero-acoes">
+            <a href="/download/backup/instalador" class="btn btn-lg btn-primario">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+              Baixar instalador
+            </a>
+            <a href="#download" class="btn btn-lg btn-contorno">Ver opções de download</a>
+          </div>
+          <p class="contador-dl" data-contador hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+            <span><b data-downloads>32</b> downloads realizados</span>
+          </p>
+          <ul class="hero-bancos" aria-label="Bancos suportados">
+            <li>SQL Server</li><li>PostgreSQL</li><li>MySQL</li><li>MariaDB</li><li>Oracle</li>
+          </ul>
+        </div>
+        <div class="hero-imagem">
+          <div class="janela">
+            <div class="janela-barra"><i></i><i></i><i></i><span>API2Dev Backup</span></div>
+            <img src="/img/backup/01-painel.webp" alt="Painel do API2Dev Backup com backups do dia, falhas, tarefas agendadas e backups recentes" width="1440" height="900">
+          </div>
+          <div class="codigo-flutuante" aria-hidden="true">
+<pre><span class="c-c"># Loja - diário · 02:00</span>
+<span class="c-m">✓</span> loja_20261018_020000.zip  <span class="c-n">1,2 MB</span>
+  <span class="c-k">ZIP</span> AES-256 <span class="c-p">·</span> <span class="c-k">Drive</span> <span class="c-v">ok</span> <span class="c-p">·</span> <span class="c-k">FTP</span> <span class="c-v">ok</span>
+<span class="c-c"># próxima execução: 12:00</span></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ NÚMEROS -->
+    <section class="faixa">
+      <div class="container faixa-in">
+        <div><b>4</b><span>bancos: SQL Server, PostgreSQL, MySQL e Oracle</span></div>
+        <div><b>AES-256</b><span>ZIP protegido por senha</span></div>
+        <div><b>3</b><span>destinos: pasta local, Google Drive e FTP</span></div>
+        <div><b>24/7</b><span>na bandeja ou como serviço do Windows</span></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ COMO FUNCIONA -->
+    <section id="como-funciona" class="secao">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Como funciona</span>
+          <h2>Configure uma vez. O backup acontece sozinho.</h2>
+          <p>Você cadastra o servidor, escolhe os bancos e o horário. O API2Dev Backup gera o arquivo com a ferramenta oficial
+            de cada banco, compacta, envia para os destinos e registra tudo no histórico.</p>
+        </header>
+
+        <div class="fluxo" aria-hidden="true">
+          <div class="fluxo-no"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span>Seus bancos de dados</span></div>
+          <div class="fluxo-seta"><span>backup agendado</span></div>
+          <div class="fluxo-no destaque"><img src="/img/backup/icone.png" alt=""><span>API2Dev Backup</span></div>
+          <div class="fluxo-seta"><span>ZIP com senha</span></div>
+          <div class="fluxo-no"><svg viewBox="0 0 24 24"><path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19.5 10 4 4 0 0 1 18 18z"/></svg><span>Pasta local, Google Drive e FTP</span></div>
+        </div>
+
+        <ol class="passos">
+          <li>
+            <span class="num">1</span>
+            <h3>Cadastre a conexão</h3>
+            <p>SQL Server (usuário SQL ou Windows), PostgreSQL, MySQL/MariaDB ou Oracle. Teste a conexão e veja a lista de bancos na hora.</p>
+          </li>
+          <li>
+            <span class="num">2</span>
+            <h3>Crie a tarefa</h3>
+            <p>Marque os bancos, defina horários e dias da semana (ou a cada N minutos), ZIP com senha e por quanto tempo guardar.</p>
+          </li>
+          <li>
+            <span class="num">3</span>
+            <h3>Escolha os destinos</h3>
+            <p>Pasta local, Google Drive e/ou FTP. Receba um e-mail sempre, só quando houver erro ou nunca.</p>
+          </li>
+          <li>
+            <span class="num">4</span>
+            <h3>Restaure quando precisar</h3>
+            <p>No histórico, clique em <i>Restaurar</i>. Se o arquivo local foi apagado, ele é baixado do Drive ou do FTP automaticamente.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================================================ BANCOS -->
+    <section id="bancos" class="secao secao-alt">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Bancos suportados</span>
+          <h2>Cada banco com a sua ferramenta oficial de backup</h2>
+          <p>Os arquivos gerados são os mesmos que um DBA faria à mão — e podem ser restaurados fora do sistema, se precisar.</p>
+        </header>
+        <div class="grade grade-4 bk-bancos">
+          <article class="cartao">
+            <div class="icone bk-sql"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></div>
+            <h3>SQL Server</h3>
+            <p><code>BACKUP DATABASE</code> gerando <code>.bak</code> com <code>COPY_ONLY</code> e <code>CHECKSUM</code> — não interfere na sua rotina de backups. Express, Standard e Enterprise.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone bk-pg"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></div>
+            <h3>PostgreSQL</h3>
+            <p><code>pg_dump</code> no formato custom (<code>.backup</code>) e restauração com <code>pg_restore</code>, encerrando as conexões ativas do banco de destino.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone bk-my"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></div>
+            <h3>MySQL e MariaDB</h3>
+            <p><code>mysqldump</code> com <code>--single-transaction</code>, rotinas, triggers e eventos. Restaura até com outro nome de banco.</p>
+          </article>
+          <article class="cartao">
+            <div class="icone bk-ora"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></div>
+            <h3>Oracle</h3>
+            <p>Data Pump (<code>expdp</code>/<code>impdp</code>) por schema, com <code>REMAP_SCHEMA</code> para restaurar em outro schema.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ RECURSOS -->
+    <section id="recursos" class="secao">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Recursos</span>
+          <h2>Tudo o que uma rotina de backup séria precisa</h2>
+        </header>
+        <div class="recursos">
+          <div class="recurso"><h3>Agendamento flexível</h3><p>Vários horários por dia, dias da semana ou intervalo em minutos. Veja a próxima execução de cada tarefa.</p></div>
+          <div class="recurso"><h3>Seleção de bancos</h3><p>Liste os bancos do servidor e marque quais entram em cada tarefa. Uma tarefa pode ter vários bancos.</p></div>
+          <div class="recurso"><h3>ZIP com senha</h3><p>Compactação ZIP com criptografia AES-256 (7-Zip). Abre em qualquer descompactador com a senha.</p></div>
+          <div class="recurso"><h3>Limite por dia</h3><p>Defina a quantidade máxima de backups por dia: ao passar do limite, os mais antigos do dia são removidos.</p></div>
+          <div class="recurso"><h3>Retenção em dias</h3><p>Apaga automaticamente os backups mais antigos que N dias — na pasta local, no Google Drive e no FTP.</p></div>
+          <div class="recurso"><h3>Google Drive</h3><p>Envio para a sua conta Google (OAuth), em uma pasta criada pelo próprio sistema.</p></div>
+          <div class="recurso"><h3>FTP e FTPS</h3><p>Envio para servidor FTP com TLS opcional, organizado por tarefa e data.</p></div>
+          <div class="recurso"><h3>Notificação por e-mail</h3><p>Relatório em HTML com status, arquivo e tamanho de cada banco: sempre, só em erro ou nunca.</p></div>
+          <div class="recurso"><h3>Histórico completo</h3><p>Filtros por tarefa, status e data, log de cada execução e onde o arquivo está guardado.</p></div>
+          <div class="recurso"><h3>Restauração</h3><p>Restaure pelo histórico ou de qualquer arquivo, no mesmo banco ou com outro nome, com confirmação.</p></div>
+          <div class="recurso"><h3>Bandeja do sistema</h3><p>Inicia com o Windows, fica na bandeja e permite executar um backup na hora pelo menu.</p></div>
+          <div class="recurso"><h3>Serviço do Windows</h3><p>Instale como serviço para os backups rodarem mesmo sem ninguém logado no servidor.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SEGURANÇA -->
+    <section id="seguranca" class="secao secao-escura">
+      <div class="container seg-in">
+        <div>
+          <span class="sobretitulo">Segurança</span>
+          <h2>Seus dados não passam por servidores da API2Dev.</h2>
+          <p>O API2Dev Backup roda no seu computador ou servidor. Os arquivos vão direto para a pasta, o Drive ou o FTP que
+            você configurou — e as senhas ficam criptografadas no banco local do aplicativo.</p>
+          <a href="#download" class="btn btn-primario">Baixar agora</a>
+        </div>
+        <ul class="lista-check">
+          <li>Senhas de conexões, FTP, e-mail e ZIP gravadas com AES-256-GCM</li>
+          <li>ZIP protegido por senha com AES-256</li>
+          <li>Google Drive com escopo restrito: o app só enxerga o que ele criou</li>
+          <li>Backups do SQL Server em <code>COPY_ONLY</code>, sem quebrar a cadeia de logs</li>
+          <li>Restauração sempre com confirmação explícita</li>
+          <li>Log detalhado de cada backup e de cada restauração</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ TELAS -->
+    <section id="telas" class="secao">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Telas</span>
+          <h2>Veja o API2Dev Backup por dentro</h2>
+          <p>Clique para ampliar.</p>
+        </header>
+        <div class="galeria">
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/01-painel.webp" alt="Painel com resumo do dia" width="1440" height="900"></button><figcaption>Painel — backups do dia, tarefas e execução em tempo real</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/02-conexoes.webp" alt="Lista de conexões" width="1440" height="900"></button><figcaption>Conexões — SQL Server, PostgreSQL, MySQL e Oracle</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/03-nova-conexao.webp" alt="Cadastro de conexão" width="1440" height="900"></button><figcaption>Cadastro de conexão com teste</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/04-tarefas.webp" alt="Tarefas de backup" width="1440" height="900"></button><figcaption>Tarefas — agenda, ZIP, destinos e retenção</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/05-tarefa-edicao.webp" alt="Edição de tarefa" width="1440" height="900"></button><figcaption>Tarefa — seleção de bancos e agendamento</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/06-historico.webp" alt="Histórico de backups" width="1440" height="900"></button><figcaption>Histórico com filtros e locais do arquivo</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/07-restaurar.webp" alt="Restaurar backup" width="1440" height="900"></button><figcaption>Restauração — mesmo banco ou com outro nome</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/09-config-servico.webp" alt="Serviço do Windows" width="1440" height="900"></button><figcaption>Serviço do Windows</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/10-config-gdrive.webp" alt="Google Drive" width="1440" height="900"></button><figcaption>Google Drive</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/11-config-ftp.webp" alt="FTP" width="1440" height="900"></button><figcaption>FTP / FTPS</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/12-config-email.webp" alt="Notificação por e-mail" width="1440" height="900"></button><figcaption>Notificação por e-mail</figcaption></figure>
+          <figure><button type="button" data-zoom><img loading="lazy" src="/img/backup/08-config-geral.webp" alt="Configurações gerais" width="1440" height="900"></button><figcaption>Configurações gerais</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ PRIMEIROS PASSOS -->
+    <section id="primeiros-passos" class="secao secao-alt">
+      <div class="container estreito">
+        <header class="secao-cab">
+          <span class="sobretitulo">Primeiros passos</span>
+          <h2>Como usar</h2>
+        </header>
+        <ol class="guia-lista">
+          <li><b>Instale ou abra o portátil.</b> O aplicativo abre o painel e fica na bandeja do sistema, ao lado do relógio.</li>
+          <li><b>Conexões → Nova conexão.</b> Escolha o tipo do banco, informe servidor, porta, usuário e senha e clique em <i>Testar conexão</i>.
+            No SQL Server remoto, informe a pasta de backup do servidor e o caminho de rede para acessá-la (ex.: <code>\\SERVIDOR\Backup</code>).</li>
+          <li><b>Tarefas de backup → Nova tarefa.</b> Marque os bancos, os horários e os dias da semana. Ative o ZIP, defina uma senha,
+            a quantidade máxima de backups por dia e por quantos dias guardar.</li>
+          <li><b>Configurações.</b> Conecte o Google Drive, informe o FTP e o servidor de e-mail (SMTP) e use os botões de teste.</li>
+          <li><b>Execute agora para validar.</b> No Painel, clique em <i>Executar</i> e acompanhe o log em tempo real.</li>
+          <li><b>Opcional: serviço do Windows.</b> Em <i>Configurações → Serviço do Windows</i>, clique em <i>Instalar serviço</i>
+            para os backups rodarem mesmo sem usuário logado (disponível no instalador).</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================================================ DOWNLOAD -->
+    <section id="download" class="secao secao-download">
+      <div class="container">
+        <header class="secao-cab">
+          <span class="sobretitulo">Download</span>
+          <h2>Baixe o API2Dev Backup <span data-versao>v1.0.0</span></h2>
+          <p>Para Windows 10 e 11 (64 bits).</p>
+          <p class="contador-dl contador-dl-centro" data-contador hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+            <span>Já são <b data-downloads>32</b> downloads</span>
+          </p>
+        </header>
+        <div class="downloads">
+          <article class="dl" data-tipo="instalador">
+            <span class="dl-tag">Recomendado</span>
+            <h3>Instalador</h3>
+            <p>Cria atalhos, inclui desinstalador e permite instalar o <b>serviço do Windows</b> para backups sem usuário logado.</p>
+            <ul class="dl-info">
+              <li><span>Arquivo</span><b data-campo="nome">API2Dev-Backup-Setup.exe</b></li>
+              <li><span>Tamanho</span><b data-campo="tamanho">~93 MB</b></li>
+            </ul>
+            <a class="btn btn-lg btn-primario btn-bloco" href="/download/backup/instalador">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+              Baixar instalador
+            </a>
+            <details class="dl-hash"><summary>SHA-256</summary><code data-campo="sha256">—</code></details>
+          </article>
+          <article class="dl" data-tipo="portatil">
+            <h3>Portátil</h3>
+            <p>Um único executável, sem instalação. Roda na bandeja e inicia com o Windows, mas não instala o serviço do Windows.</p>
+            <ul class="dl-info">
+              <li><span>Arquivo</span><b data-campo="nome">API2Dev-Backup-Portatil.exe</b></li>
+              <li><span>Tamanho</span><b data-campo="tamanho">~84 MB</b></li>
+            </ul>
+            <a class="btn btn-lg btn-contorno btn-bloco" href="/download/backup/portatil">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+              Baixar portátil
+            </a>
+            <details class="dl-hash"><summary>SHA-256</summary><code data-campo="sha256">—</code></details>
+          </article>
+        </div>
+        <div class="aviso">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+          <p><b>Aviso do Windows SmartScreen:</b> o executável ainda não tem assinatura digital, então o Windows pode mostrar
+            “O Windows protegeu o computador”. Clique em <b>Mais informações → Executar assim mesmo</b>.
+            Se quiser, confira o arquivo com o SHA-256 acima (PowerShell: <code>Get-FileHash .\arquivo.exe</code>).</p>
+        </div>
+        <p class="requisitos"><b>Requisitos:</b> Windows 10 ou 11 64 bits · acesso de rede ao servidor do banco ·
+          PostgreSQL, MySQL e Oracle precisam das ferramentas do banco instaladas (<code>pg_dump</code>, <code>mysqldump</code>, <code>expdp</code>).
+          SQL Server com usuário e senha não precisa de nada extra.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ DÚVIDAS -->
+    <section id="duvidas" class="secao secao-alt">
+      <div class="container estreito">
+        <header class="secao-cab">
+          <span class="sobretitulo">Dúvidas frequentes</span>
+          <h2>Perguntas e respostas</h2>
+        </header>
+        <div class="faq">
+          <details><summary>Quais bancos são suportados?</summary><p>Microsoft SQL Server (2012 em diante, inclusive Express), PostgreSQL, MySQL, MariaDB e Oracle (via Data Pump). Você pode ter várias conexões e tarefas ao mesmo tempo, de tipos diferentes.</p></details>
+          <details><summary>Preciso instalar alguma ferramenta?</summary><p>Para SQL Server com usuário e senha, não. Para PostgreSQL, MySQL e Oracle, o computador precisa ter as ferramentas do próprio banco (<code>pg_dump</code>/<code>pg_restore</code>, <code>mysqldump</code>/<code>mysql</code>, <code>expdp</code>/<code>impdp</code>). O sistema procura nas pastas padrão de instalação e você também pode informar o caminho em <i>Configurações → Ferramentas</i>.</p></details>
+          <details><summary>O que é a “quantidade máxima de backups por dia”?</summary><p>É quantas cópias de cada banco ficam guardadas por dia. Se a tarefa roda a cada hora e o limite é 3, ao fazer o 4º backup do dia o mais antigo daquele dia é removido (na pasta local, no Drive e no FTP).</p></details>
+          <details><summary>O computador precisa ficar logado?</summary><p>Não, se você usar o instalador e ativar o <b>serviço do Windows</b> em <i>Configurações → Serviço do Windows</i>. Sem o serviço, os backups rodam pelo aplicativo da bandeja, que inicia junto com o Windows.</p></details>
+          <details><summary>Consigo abrir o ZIP fora do sistema?</summary><p>Sim. O ZIP usa criptografia AES-256 e abre no 7-Zip, WinRAR e similares com a senha definida na tarefa. Guarde essa senha em local seguro.</p></details>
+          <details><summary>Como funciona o Google Drive?</summary><p>Você cria um ID de cliente OAuth do tipo “App para computador” no Google Cloud Console, informa o Client ID e o Client Secret e clica em <i>Conectar conta Google</i>. O sistema cria a pasta de destino e só tem acesso aos arquivos que ele mesmo enviou.</p></details>
+          <details><summary>Meu SQL Server está em outro servidor. Funciona?</summary><p>Sim. O <code>.bak</code> é gravado pelo próprio SQL Server; informe na conexão a pasta de backup do servidor e o caminho de rede para esta máquina acessá-la (ex.: <code>\\SERVIDOR\Backup</code>). A conta do serviço do SQL Server precisa ter permissão de escrita nessa pasta.</p></details>
+          <details><summary>Posso restaurar em outro banco, sem sobrescrever o original?</summary><p>Sim. Na tela de restauração, informe outro nome de banco (ou de schema, no Oracle). Também é possível restaurar em outra conexão do mesmo tipo.</p></details>
+          <details><summary>Onde ficam as configurações?</summary><p>Em um banco SQLite local, em <code>C:\ProgramData\API2Dev\SistemaBackup</code>, junto com os logs. Os backups ficam, por padrão, na subpasta <code>backups</code> — a pasta pode ser alterada.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ CONTATO -->
+    <section id="contato" class="secao contato">
+      <div class="container contato-in">
+        <img src="/img/backup/icone.png" alt="API2Dev Backup" width="120" height="120">
+        <div>
+          <h2>Feito pela API2Dev</h2>
+          <p>Desenvolvido por <b>Hendell Cardoso</b>. Precisa de ajuda para configurar os backups, restaurar um banco ou de uma solução sob medida? Fale com a gente.</p>
+          <div class="contato-links">
+            <a class="btn btn-contorno" href="mailto:suporte@api2dev.com.br">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              suporte@api2dev.com.br
+            </a>
+            <a class="btn btn-whats" href="https://wa.me/5562993148955?text=Ol%C3%A1!%20Vim%20pelo%20site%20do%20API2Dev%20Backup." target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11 11 0 0 0 3.2 17.2L2 22l4.9-1.3A11 11 0 0 0 20.5 3.5zM12 20a8 8 0 0 1-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8.9-.3.2-.5 0a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.7-1.8c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3z"/></svg>
+              (62) 9.9314-8955
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="container rodape-in">
+      <span>© <span data-ano>2026</span> API2Dev · Hendell Cardoso</span>
+      <span><a href="/">Conheça também o Data Gateway</a> · <a href="#topo">Voltar ao topo ↑</a></span>
+    </div>
+  </footer>
+
+  <div class="zoom" hidden role="dialog" aria-modal="true" aria-label="Telas do API2Dev Backup">
+    <button type="button" class="zoom-fechar" aria-label="Fechar">×</button>
+    <button type="button" class="zoom-nav zoom-ant" aria-label="Tela anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+    <img alt="">
+    <button type="button" class="zoom-nav zoom-prox" aria-label="Próxima tela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    <p class="zoom-legenda"></p>
+    <p class="zoom-contador"></p>
+  </div>
+
+  <script src="/js/site.js?v=1.2.3" defer></script>
+</body>
+</html>
