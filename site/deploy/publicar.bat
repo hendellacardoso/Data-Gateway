@@ -22,7 +22,7 @@ rem ============================================================================
 set "SERVICO=SiteDataGateway"
 set "PORTA=5010"
 set "DOMINIO=api2dev.com.br"
-set "GIT_REMOTO=https://github.com/hendellacardoso/api-gateway-desktop.git"
+set "GIT_REMOTO=https://github.com/hendellacardoso/Data-Gateway.git"
 set "GIT_BRANCH=main"
 set "SITE=%~dp0.."
 for %%i in ("%SITE%") do set "SITE=%%~fi"

@@ -98,7 +98,7 @@ goto :fim
 
 :final
 echo.
-echo Acompanhe em: https://github.com/hendellacardoso/api-gateway-desktop/actions
+echo Acompanhe em: https://github.com/hendellacardoso/Data-Gateway/actions
 echo Passo a passo da assinatura: ASSINATURA.md
 goto :fim
 

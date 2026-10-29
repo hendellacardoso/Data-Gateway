@@ -7,9 +7,9 @@ Para os executáveis saírem **assinados**, é preciso configurar o SignPath uma
 
 1. Acesse <https://signpath.org> → **Apply** (formulário para projetos open source).
 2. Informe:
-   - Repositório: `https://github.com/hendellacardoso/api-gateway-desktop`
+   - Repositório: `https://github.com/hendellacardoso/Data-Gateway`
    - Licença: MIT
-   - Página do projeto e da política: `https://github.com/hendellacardoso/api-gateway-desktop/blob/main/CODE_SIGNING_POLICY.md`
+   - Página do projeto e da política: `https://github.com/hendellacardoso/Data-Gateway/blob/main/CODE_SIGNING_POLICY.md`
    - Build: GitHub Actions (workflow `Build e Release`)
 3. Antes de enviar, publique pelo menos um Release (mesmo sem assinatura) com `publicar-versao.bat`:
    o SignPath exige que a versão já esteja publicada e que a página de download descreva o programa.
@@ -21,7 +21,7 @@ Para os executáveis saírem **assinados**, é preciso configurar o SignPath uma
 No painel <https://app.signpath.io>:
 
 1. **Trusted Build Systems** → adicione **GitHub.com** e vincule ao projeto.
-2. Instale o **SignPath GitHub App** e dê acesso ao repositório `api-gateway-desktop`.
+2. Instale o **SignPath GitHub App** e dê acesso ao repositório `Data-Gateway`.
 3. **Projects** → projeto com slug **`data-gateway`** (ou anote o slug criado pela Foundation).
 4. **Artifact Configuration** → cole o conteúdo de [`.signpath/artifact-configuration.xml`](.signpath/artifact-configuration.xml).
 5. **Signing Policies** → use a política de release (slug **`release-signing`**, ou anote o slug existente)
@@ -31,7 +31,7 @@ No painel <https://app.signpath.io>:
 
 ## 3. Configurar o GitHub
 
-Em `https://github.com/hendellacardoso/api-gateway-desktop/settings/secrets/actions`:
+Em `https://github.com/hendellacardoso/Data-Gateway/settings/secrets/actions`:
 
 | Tipo | Nome | Valor |
 |---|---|---|

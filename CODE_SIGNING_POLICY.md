@@ -2,7 +2,7 @@
 
 Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
 
-Os executáveis do Data Gateway publicados em [Releases](https://github.com/hendellacardoso/api-gateway-desktop/releases)
+Os executáveis do Data Gateway publicados em [Releases](https://github.com/hendellacardoso/Data-Gateway/releases)
 (`DataGateway-Setup-<versão>.exe` e `DataGateway-Portable-<versão>.exe`) são compilados a partir deste repositório pelo
 [GitHub Actions](.github/workflows/build.yml) e assinados pelo SignPath somente após aprovação manual de cada versão.
 

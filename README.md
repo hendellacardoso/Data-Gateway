@@ -44,7 +44,7 @@ Aplicativo desktop (Windows) que transforma tabelas de bancos de dados existente
 
 ## Download
 
-Baixe a versão mais recente em **[Releases](https://github.com/hendellacardoso/api-gateway-desktop/releases/latest)**:
+Baixe a versão mais recente em **[Releases](https://github.com/hendellacardoso/Data-Gateway/releases/latest)**:
 
 - `DataGateway-Setup-<versão>.exe` — instalador (atalhos, desinstalador, escolha da pasta).
 - `DataGateway-Portable-<versão>.exe` — executável portátil, sem instalação.
@@ -70,7 +70,7 @@ Na primeira execução o app pede a criação do **usuário administrador**.
 ### Enviar para o GitHub
 
 Dê dois cliques em `enviar-git.bat`. Na primeira vez ele inicializa o repositório, configura o remoto
-`https://github.com/hendellacardoso/api-gateway-desktop.git`, pede nome/e-mail (se ainda não configurados) e a mensagem do commit,
+`https://github.com/hendellacardoso/Data-Gateway.git`, pede nome/e-mail (se ainda não configurados) e a mensagem do commit,
 e faz o `push` para a branch `main`. `node_modules`, `dist`, `release` e bancos `.db` ficam fora (via `.gitignore`).
 
 ### Publicar uma versão (GitHub Actions)

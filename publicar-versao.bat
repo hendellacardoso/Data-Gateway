@@ -52,9 +52,9 @@ git push origin "%TAG%" || goto :erro
 
 echo.
 echo [OK] Tag %TAG% enviada.
-echo  Acompanhe a compilacao em: https://github.com/hendellacardoso/api-gateway-desktop/actions
+echo  Acompanhe a compilacao em: https://github.com/hendellacardoso/Data-Gateway/actions
 echo  Quando o SignPath pedir, aprove a assinatura em https://app.signpath.io
-echo  O Release aparece em:      https://github.com/hendellacardoso/api-gateway-desktop/releases
+echo  O Release aparece em:      https://github.com/hendellacardoso/Data-Gateway/releases
 goto :fim
 
 :erro

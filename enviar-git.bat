@@ -4,11 +4,11 @@ title Data Gateway - Enviar para o GitHub
 
 rem ============================================================
 rem  Envia o projeto para:
-rem  https://github.com/hendellacardoso/api-gateway-desktop.git
+rem  https://github.com/hendellacardoso/Data-Gateway.git
 rem  Uso: de dois cliques neste arquivo (na pasta do projeto).
 rem ============================================================
 
-set "REPO=https://github.com/hendellacardoso/api-gateway-desktop.git"
+set "REPO=https://github.com/hendellacardoso/Data-Gateway.git"
 set "BRANCH=main"
 
 cd /d "%~dp0"
