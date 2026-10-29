@@ -1,0 +1,151 @@
+# Data Gateway — compila, testa, assina (SignPath) e publica no GitHub Releases.
+#
+#  - push na main / pull request : compila e testa (artefato sem assinatura, para conferência)
+#  - tag v*  (ex.: v1.2.0)       : compila, envia para assinatura no SignPath (aprovação manual)
+#                                   e cria o Release com os executáveis assinados
+#
+# Configuração (Settings → Secrets and variables → Actions), depois da aprovação do SignPath Foundation:
+#   Secret   SIGNPATH_API_TOKEN          token de API do SignPath (usuário do tipo "CI")
+#   Variable SIGNPATH_ORGANIZATION_ID    ID da organização no SignPath
+#   Variable SIGNPATH_PROJECT_SLUG       slug do projeto       (padrão: data-gateway)
+#   Variable SIGNPATH_POLICY_SLUG        slug da política      (padrão: release-signing)
+# Enquanto SIGNPATH_ORGANIZATION_ID não existir, a tag gera um Release com os executáveis SEM assinatura.
+
+name: Build e Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths-ignore: ['site/**', 'publicacao/**', '**.md']
+  pull_request:
+    paths-ignore: ['site/**', 'publicacao/**', '**.md']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    name: Compilar e testar (Windows)
+    runs-on: windows-latest
+    outputs:
+      artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+      version: ${{ steps.versao.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Versão
+        id: versao
+        shell: pwsh
+        run: |
+          $v = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          "version=$v" >> $env:GITHUB_OUTPUT
+          if ("${{ github.ref_type }}" -eq "tag" -and "${{ github.ref_name }}" -ne "v$v") {
+            throw "A tag ${{ github.ref_name }} não confere com a versão $v do package.json."
+          }
+
+      - name: Dependências
+        run: npm ci
+
+      - name: Testes (Node)
+        run: |
+          npm rebuild better-sqlite3
+          npm test
+
+      - name: Módulos nativos para o Electron
+        run: npx electron-builder install-app-deps
+
+      - name: Gerar instalador e portátil
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          npm run build:renderer
+          npx electron-builder --win --publish never
+
+      - name: Enviar executáveis (sem assinatura)
+        id: unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: datagateway-${{ steps.versao.outputs.version }}-sem-assinatura
+          path: |
+            release/DataGateway-Setup-*.exe
+            release/DataGateway-Portable-*.exe
+          if-no-files-found: error
+          retention-days: 14
+
+  sign-and-release:
+    name: Assinar e publicar
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Assinar no SignPath (aguarda a aprovação manual)
+        if: vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: signpath/github-action-submit-signing-request@v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'data-gateway' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
+          github-artifact-id: ${{ needs.build.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 86400
+          output-artifact-directory: dist-final
+
+      - name: Sem SignPath configurado — usa os executáveis sem assinatura
+        if: vars.SIGNPATH_ORGANIZATION_ID == ''
+        uses: actions/download-artifact@v4
+        with:
+          name: datagateway-${{ needs.build.outputs.version }}-sem-assinatura
+          path: dist-final
+
+      - name: Conferir assinatura e gerar SHA-256
+        shell: pwsh
+        run: |
+          $linhas = @()
+          foreach ($f in Get-ChildItem dist-final -Recurse -Filter *.exe) {
+            $s = Get-AuthenticodeSignature $f.FullName
+            Write-Host "$($f.Name): $($s.Status) $($s.SignerCertificate.Subject)"
+            if ("${{ vars.SIGNPATH_ORGANIZATION_ID }}" -ne "" -and $s.Status -ne 'Valid') { throw "$($f.Name) não está assinado corretamente." }
+            $h = (Get-FileHash $f.FullName -Algorithm SHA256).Hash.ToLower()
+            $linhas += "$h  $($f.Name)"
+          }
+          $linhas | Set-Content -Encoding ascii dist-final/SHA256SUMS.txt
+          Get-Content dist-final/SHA256SUMS.txt
+
+      - name: Criar o Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Data Gateway ${{ needs.build.outputs.version }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          files: |
+            dist-final/**/*.exe
+            dist-final/SHA256SUMS.txt
+          body: |
+            ## Data Gateway ${{ needs.build.outputs.version }}
+
+            Aplicativo para Windows 10/11 (64 bits) que transforma bancos SQL Server, PostgreSQL, MySQL, MariaDB,
+            Firebird e SQLite em APIs REST seguras, configuradas visualmente.
+
+            - `DataGateway-Setup-${{ needs.build.outputs.version }}.exe` — instalador (atalhos e desinstalador)
+            - `DataGateway-Portable-${{ needs.build.outputs.version }}.exe` — executável portátil, sem instalação
+            - `SHA256SUMS.txt` — hashes para conferência (`Get-FileHash .\arquivo.exe`)
+
+            Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+            Veja a [política de assinatura de código](https://github.com/${{ github.repository }}/blob/main/CODE_SIGNING_POLICY.md).

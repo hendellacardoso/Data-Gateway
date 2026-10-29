@@ -44,12 +44,15 @@ Aplicativo desktop (Windows) que transforma tabelas de bancos de dados existente
 
 ## Download
 
-Baixe o instalador na página de **[Releases](https://github.com/hendellacardoso/api-gateway-desktop/releases)**:
+Baixe a versão mais recente em **[Releases](https://github.com/hendellacardoso/api-gateway-desktop/releases/latest)**:
 
 - `DataGateway-Setup-<versão>.exe` — instalador (atalhos, desinstalador, escolha da pasta).
 - `DataGateway-Portable-<versão>.exe` — executável portátil, sem instalação.
+- `SHA256SUMS.txt` — hashes para conferir os arquivos.
 
-> Os executáveis não são assinados digitalmente: o Windows SmartScreen pode exibir “O Windows protegeu o computador”. Clique em **Mais informações → Executar assim mesmo**.
+Os executáveis são compilados pelo GitHub Actions a partir deste repositório e assinados digitalmente.
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org)
+— veja a [Code signing policy](CODE_SIGNING_POLICY.md).
 
 ---
 
@@ -70,7 +73,14 @@ Dê dois cliques em `enviar-git.bat`. Na primeira vez ele inicializa o repositó
 `https://github.com/hendellacardoso/api-gateway-desktop.git`, pede nome/e-mail (se ainda não configurados) e a mensagem do commit,
 e faz o `push` para a branch `main`. `node_modules`, `dist`, `release` e bancos `.db` ficam fora (via `.gitignore`).
 
-### Gerar o instalador (.exe)
+### Publicar uma versão (GitHub Actions)
+
+1. Atualize `"version"` no `package.json` (ex.: `1.2.1`) e envie com `enviar-git.bat`.
+2. Crie a tag da versão: `git tag v1.2.1` e `git push origin v1.2.1` (ou use `publicar-versao.bat`).
+3. O GitHub Actions compila, roda os testes, envia para assinatura no SignPath e, depois da sua aprovação lá,
+   cria o Release com os executáveis assinados. Veja [ASSINATURA.md](ASSINATURA.md) para a configuração inicial.
+
+### Gerar o instalador (.exe) localmente
 
 Dê dois cliques em `gerar-instalador.bat` (ou rode `npm run dist`). São gerados em `release/`:
 
@@ -248,3 +258,14 @@ set GW_FB_HOST=127.0.0.1& set GW_FB_DB=C:\fb\ERP.FDB& set GW_FB_DB_NONE=C:\fb\LE
 
 - **Relay remoto:** seção `relay` reservada em `GW_CONFIG`; o `GatewayServer` e o `CrudService` são independentes do transporte, permitindo um cliente de túnel persistente que encaminhe requisições ao mesmo pipeline.
 - Novos drivers, GraphQL, webhooks, cache e multiempresa podem ser adicionados sobre `context.js` sem alterar o núcleo.
+
+---
+
+## Licença
+
+[MIT](LICENSE) © 2026 Hendell Alves Cardoso — API2Dev.
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+Detalhes, equipe e política de privacidade em [CODE_SIGNING_POLICY.md](CODE_SIGNING_POLICY.md).

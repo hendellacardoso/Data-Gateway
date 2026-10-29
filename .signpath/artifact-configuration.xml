@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Configuração de artefato do SignPath para o Data Gateway.
+  Copie este conteúdo em: SignPath → Projeto "data-gateway" → Artifact Configurations → Edit.
+  O GitHub Actions envia um ZIP com DataGateway-Setup-<versão>.exe e DataGateway-Portable-<versão>.exe;
+  o SignPath assina os dois executáveis (Authenticode).
+-->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <pe-file-set>
+      <include path="DataGateway-Setup-*.exe" />
+      <include path="DataGateway-Portable-*.exe" />
+      <for-each>
+        <authenticode-sign />
+      </for-each>
+    </pe-file-set>
+  </zip-file>
+</artifact-configuration>

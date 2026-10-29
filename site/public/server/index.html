@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Server Manager — seu servidor Windows, sem complicação | API2Dev</title>
+<meta name="description" content="Painel web para publicar, monitorar e proteger aplicações Node.js, Java, Tomcat, React e sistemas Maker em Windows Server. HTTPS automático, bancos de dados, backups, alertas e auditoria em um só lugar.">
+<link rel="icon" href="img/icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Server Manager — seu servidor Windows, sem complicação">
+<meta property="og:description" content="Publique, monitore e proteja suas aplicações no Windows Server por um painel web. Node.js, Java, Tomcat, React e Maker, com HTTPS automático, bancos de dados, backups e alertas.">
+<meta property="og:url" content="https://api2dev.com.br/server-manager/">
+<meta property="og:image" content="https://api2dev.com.br/server-manager/img/divulgacao-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-soft: #475569;
+    --line: #e2e8f0;
+    --bg: #ffffff;
+    --bg-soft: #f4f7fb;
+    --blue: #0b6bff;
+    --blue-deep: #0647b8;
+    --cyan: #22b8ff;
+    --night: #03060d;
+    --night-2: #0a1428;
+    --ok: #1a7f37;
+    --radius: 14px;
+    --shadow: 0 24px 60px -20px rgba(15, 23, 42, .28), 0 2px 6px rgba(15, 23, 42, .06);
+    --max: 1180px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: var(--blue); }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 10px; font-weight: 600; font-size: 15px; text-decoration: none; transition: transform .15s ease, background .15s ease, box-shadow .15s ease; border: 1px solid transparent; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--blue); color: #fff; box-shadow: 0 10px 24px -10px rgba(11, 107, 255, .8); }
+  .btn-primary:hover { background: #2a7dff; }
+  .btn-ghost { color: #dbe7ff; border-color: rgba(255, 255, 255, .22); }
+  .btn-ghost:hover { background: rgba(255, 255, 255, .08); }
+  .btn-outline { color: var(--blue); border-color: #bcd3ff; background: #fff; }
+
+  /* topo */
+  .nav { position: sticky; top: 0; z-index: 20; background: rgba(3, 6, 13, .86); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, .06); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .nav .brand { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; text-decoration: none; }
+  .nav .brand img { width: 30px; height: 30px; border-radius: 7px; }
+  .nav nav { display: flex; gap: 26px; align-items: center; }
+  .nav nav a { color: #c5d3ea; text-decoration: none; font-size: 14px; font-weight: 500; }
+  .nav nav a:hover { color: #fff; }
+  .nav nav .btn { padding: 9px 16px; font-size: 14px; color: #fff; }
+
+  /* hero */
+  .hero { background: radial-gradient(1100px 520px at 75% 10%, rgba(11, 107, 255, .35), transparent 60%), radial-gradient(700px 400px at 10% 0%, rgba(34, 184, 255, .18), transparent 60%), var(--night); color: #fff; padding: 72px 0 0; overflow-x: clip; position: relative; z-index: 1; }
+  .hero .grid { display: grid; grid-template-columns: 1fr; gap: 28px; text-align: center; }
+  .hero .logo { width: min(460px, 86vw); margin: 0 auto; mix-blend-mode: screen; }
+  .hero h1 { font-size: clamp(30px, 4.6vw, 52px); line-height: 1.12; letter-spacing: -.02em; margin: 8px auto 0; max-width: 860px; font-weight: 800; }
+  .hero h1 span { background: linear-gradient(90deg, #4aa3ff, var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.lead { font-size: clamp(16px, 1.6vw, 19px); color: #b8c6dd; max-width: 760px; margin: 0 auto; }
+  .hero .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
+  .hero .chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
+  .chip { font-size: 13px; color: #cfe0ff; border: 1px solid rgba(120, 170, 255, .28); background: rgba(30, 80, 170, .18); padding: 5px 12px; border-radius: 999px; }
+  .hero .shot { margin: 40px auto -120px; max-width: 1080px; position: relative; }
+  .browser { border-radius: 12px; overflow: hidden; box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .08); background: #fff; }
+  .browser .bar { height: 34px; background: #e9eef5; display: flex; align-items: center; gap: 7px; padding: 0 14px; }
+  .browser .bar i { width: 11px; height: 11px; border-radius: 50%; background: #cbd5e1; display: block; }
+  .browser .bar i:nth-child(1) { background: #ff5f57; } .browser .bar i:nth-child(2) { background: #febc2e; } .browser .bar i:nth-child(3) { background: #28c840; }
+  .browser .bar span { margin-left: 14px; flex: 1; max-width: 360px; height: 20px; border-radius: 6px; background: #fff; font-size: 11px; color: #64748b; display: flex; align-items: center; padding: 0 10px; }
+  .after-hero { height: 150px; background: var(--bg); }
+
+  /* seções */
+  section { padding: 84px 0; }
+  .soft { background: var(--bg-soft); }
+  .eyebrow { color: var(--blue); font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; }
+  h2 { font-size: clamp(26px, 3.2vw, 38px); letter-spacing: -.02em; line-height: 1.18; margin: 8px 0 14px; }
+  .sub { color: var(--ink-soft); font-size: 17px; max-width: 720px; }
+  .center { text-align: center; } .center .sub { margin: 0 auto; }
+
+  .pains { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 40px; }
+  .pain { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .pain .x { color: #c2410c; font-weight: 700; font-size: 14px; }
+  .pain .v { color: var(--ok); font-weight: 700; font-size: 14px; margin-top: 10px; }
+  .pain p { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; }
+
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; }
+  .feature { border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; background: #fff; transition: box-shadow .2s ease, transform .2s ease; }
+  .feature:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+  .feature .ic { width: 44px; height: 44px; border-radius: 11px; display: grid; place-items: center; background: linear-gradient(135deg, #e8f1ff, #d9ecff); color: var(--blue); margin-bottom: 14px; }
+  .feature h3 { margin: 0 0 6px; font-size: 18px; }
+  .feature p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+  .feature ul { margin: 10px 0 0; padding-left: 18px; color: var(--ink-soft); font-size: 14px; }
+
+  /* galeria */
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 34px 0 22px; }
+  .tab { border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 9px 16px; border-radius: 999px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .tab[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .gallery .browser { max-width: 1080px; margin: 0 auto; box-shadow: var(--shadow); cursor: zoom-in; }
+  .gallery .caption { text-align: center; color: var(--ink-soft); margin-top: 18px; font-size: 15px; min-height: 48px; }
+
+  /* split */
+  .split { display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: center; }
+  .split.rev { grid-template-columns: 1.25fr 1fr; }
+  .split.rev .text { order: 2; }
+  .checks { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 12px; }
+  .checks li { padding-left: 32px; position: relative; color: var(--ink-soft); }
+  .checks li::before { content: ""; position: absolute; left: 0; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #e3f6e8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%231a7f37' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 10.5l3 3 6-7'/%3E%3C/svg%3E") center/14px no-repeat; }
+  .checks b { color: var(--ink); }
+
+  /* maker */
+  .maker { background: linear-gradient(180deg, var(--night-2), var(--night)); color: #fff; }
+  .maker .sub { color: #b8c6dd; }
+  .profiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
+  .profile { border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .04); border-radius: var(--radius); padding: 22px; }
+  .profile h3 { margin: 0 0 4px; }
+  .profile .tech { color: #8fb8ff; font-size: 14px; font-weight: 600; }
+  .profile p { color: #b8c6dd; font-size: 14px; margin: 10px 0 0; }
+
+  /* passos */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 40px; counter-reset: s; }
+  .step { padding: 22px; border-radius: var(--radius); background: #fff; border: 1px solid var(--line); counter-increment: s; }
+  .step::before { content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; margin-bottom: 12px; }
+  .step h3 { margin: 0 0 6px; font-size: 17px; }
+  .step p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+
+  /* faq */
+  .faq { max-width: 820px; margin: 36px auto 0; }
+  details { border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; background: #fff; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  summary::after { content: "+"; color: var(--blue); font-weight: 700; font-size: 20px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { color: var(--ink-soft); margin: 10px 0 0; }
+
+  /* cta */
+  .cta { background: radial-gradient(800px 360px at 80% 0%, rgba(11, 107, 255, .45), transparent 60%), var(--night); color: #fff; text-align: center; }
+  .cta .sub { color: #b8c6dd; margin: 0 auto; }
+  .cta .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+  footer { background: var(--night); color: #7d8aa3; font-size: 14px; border-top: 1px solid rgba(255, 255, 255, .06); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 24px; padding-bottom: 24px; }
+  footer a { color: #b8c6dd; text-decoration: none; }
+
+  /* lightbox */
+  .lightbox { position: fixed; inset: 0; background: rgba(3, 6, 13, .92); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 50; cursor: zoom-out; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-height: 92vh; border-radius: 10px; box-shadow: 0 30px 80px rgba(0, 0, 0, .6); }
+
+  @media (max-width: 960px) {
+    .features, .pains, .profiles { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .split, .split.rev { grid-template-columns: 1fr; gap: 32px; }
+    .split.rev .text { order: 0; }
+    .nav nav a:not(.btn) { display: none; }
+  }
+  @media (max-width: 620px) {
+    .wrap { padding: 0 16px; }
+    .features, .pains, .profiles, .steps { grid-template-columns: 1fr; }
+    section { padding: 64px 0; }
+    .hero .shot { margin-bottom: -60px; }
+    .after-hero { height: 80px; }
+    .browser .bar span { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#topo"><img src="img/icon.png" alt="">Server Manager</a>
+    <nav>
+      <a href="#recursos">Recursos</a>
+      <a href="#telas">Telas</a>
+      <a href="#maker">Maker</a>
+      <a href="#perguntas">Perguntas</a>
+      <a class="btn btn-primary" href="mailto:suporte@api2dev.com.br?subject=Server%20Manager%20-%20demonstra%C3%A7%C3%A3o">Solicitar demonstração</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="topo">
+  <div class="wrap grid">
+    <img class="logo" src="img/logo.png" alt="Server Manager — seu servidor, sem complicação" width="800" height="255">
+    <h1>Publique, monitore e proteja suas aplicações no <span>Windows Server</span> por um único painel web</h1>
+    <p class="lead">Node.js, Java, Tomcat, React e sistemas Maker no ar com HTTPS automático, bancos de dados, backups, alertas e auditoria — sem acesso remoto, sem scripts e sem depender de quem configurou o servidor.</p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="mailto:suporte@api2dev.com.br?subject=Server%20Manager%20-%20demonstra%C3%A7%C3%A3o">Solicitar demonstração</a>
+      <a class="btn btn-ghost" href="#telas">Ver as telas</a>
+    </div>
+    <div class="chips">
+      <span class="chip">Node.js</span><span class="chip">Java</span><span class="chip">Tomcat</span><span class="chip">React</span><span class="chip">Maker Studio · 5 · AI</span><span class="chip">PostgreSQL · MySQL · SQL Server</span>
+    </div>
+    <div class="shot">
+      <div class="browser">
+        <div class="bar"><i></i><i></i><i></i><span>https://painel.suaempresa.com.br</span></div>
+        <img src="img/dashboard.jpg" alt="Dashboard do Server Manager com CPU, memória, disco, rede e aplicações em execução" width="1600" height="1000">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="after-hero"></div>
+
+<section class="center">
+  <div class="wrap">
+    <div class="eyebrow">Por que o Server Manager</div>
+    <h2>O servidor deixa de ser uma caixa-preta</h2>
+    <p class="sub">Tudo o que hoje depende de acesso remoto, prompt de comando e memória de quem configurou passa a ficar visível, documentado e a um clique.</p>
+    <div class="pains" style="text-align:left">
+      <div class="pain"><div class="x">Antes</div><p>Publicar uma versão exige acesso remoto, parar serviço na mão, copiar arquivos e torcer.</p><div class="v">Com o Server Manager</div><p>Envie o pacote ou conecte o Git: publica, valida e volta para a versão anterior se precisar.</p></div>
+      <div class="pain"><div class="x">Antes</div><p>A aplicação cai de madrugada e alguém só descobre quando o cliente reclama.</p><div class="v">Com o Server Manager</div><p>Health checks, reinício automático e alertas por e-mail, WhatsApp, Telegram ou Teams.</p></div>
+      <div class="pain"><div class="x">Antes</div><p>Certificado vencido, porta aberta no firewall sem saber por quê, ninguém sabe quem mudou o quê.</p><div class="v">Com o Server Manager</div><p>HTTPS automático, firewall controlado pelo painel, 2FA e auditoria de cada ação.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="soft" id="recursos">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow">Recursos</div>
+      <h2>Tudo o que o seu servidor precisa, em um lugar só</h2>
+      <p class="sub">Instalado como Serviço do Windows, acessado pelo navegador. As aplicações continuam rodando mesmo durante atualizações do painel.</p>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg></div>
+        <h3>Publicação sem dor de cabeça</h3>
+        <p>Assistente que leva do pacote ou do Git até a aplicação no ar, com endereço e HTTPS.</p>
+        <ul><li>Node.js, Java (JAR), Tomcat (WAR), React e sites</li><li>Deploy por Git com webhook</li><li>Histórico de versões e rollback</li></ul>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></div>
+        <h3>Domínios e HTTPS automático</h3>
+        <p>Proxy reverso com Caddy: cadastre o domínio e o certificado é emitido e renovado sozinho.</p>
+        <ul><li>Redirecionamentos e proxy reverso</li><li>Balanceamento entre instâncias</li><li>Usa o Caddy existente ou instala um</li></ul>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div>
+        <h3>Monitoramento e alertas</h3>
+        <p>CPU, memória, disco e rede em tempo real, por servidor e por aplicação.</p>
+        <ul><li>Health checks HTTP e TCP</li><li>Reinício automático em falhas</li><li>Alertas por e-mail, WhatsApp, Telegram, Teams e webhook</li></ul>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div>
+        <h3>Bancos de dados</h3>
+        <p>PostgreSQL e MySQL instalados pelo painel; SQL Server existente cadastrado em minutos.</p>
+        <ul><li>Bancos e usuários pelo navegador</li><li>Backups agendados e restauração</li><li>Acesso externo liberado só para as redes que você escolher</li></ul>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Segurança de verdade</h3>
+        <p>Central de Segurança com nota do servidor e o que corrigir primeiro.</p>
+        <ul><li>2FA, perfis de acesso e redes autorizadas</li><li>Firewall do Windows gerenciado</li><li>Aplicações isoladas por conta de serviço</li></ul>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01"/></svg></div>
+        <h3>Runtimes, backups e vários servidores</h3>
+        <p>Node.js, Java, Tomcat e Caddy instalados pelo painel, com verificação de integridade.</p>
+        <ul><li>Backups do painel e das aplicações</li><li>Gerencie outros servidores a partir de um central</li><li>Atualização automática com sua aprovação</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="telas" class="gallery">
+  <div class="wrap center">
+    <div class="eyebrow">Telas reais</div>
+    <h2>Simples de usar, completo quando você precisa</h2>
+    <p class="sub">Interface em português, com tema claro e escuro, pensada para quem administra o servidor no dia a dia.</p>
+    <div class="tabs" role="tablist" aria-label="Telas do Server Manager">
+      <button class="tab" role="tab" aria-selected="false" data-img="dashboard" data-cap="Dashboard: saúde do servidor e das aplicações em tempo real.">Dashboard</button>
+      <button class="tab" role="tab" aria-selected="true" data-img="aplicacoes" data-cap="Aplicações: status, health check, porta, CPU, memória e uptime de cada uma — com parar e reiniciar a um clique.">Aplicações</button>
+      <button class="tab" role="tab" aria-selected="false" data-img="publicar" data-cap="Assistente de publicação: do pacote (.zip, .jar, .war) ou do repositório Git até a aplicação no ar.">Publicar</button>
+      <button class="tab" role="tab" aria-selected="false" data-img="app" data-cap="Detalhes da aplicação: execução, configuração, logs, Git, domínio, proxy, monitoramento, variáveis e histórico de deploys.">Aplicação</button>
+      <button class="tab" role="tab" aria-selected="false" data-img="health" data-cap="Health checks: verificação contínua de cada aplicação, com tempo de resposta e falhas.">Health checks</button>
+      <button class="tab" role="tab" aria-selected="false" data-img="recursos" data-cap="Recursos: consumo por aplicação, portas em uso, processos do servidor e limpeza de disco.">Recursos</button>
+      <button class="tab" role="tab" aria-selected="false" data-img="seguranca" data-cap="Central de Segurança: nota do servidor e as ações recomendadas, por prioridade.">Segurança</button>
+      <button class="tab" role="tab" aria-selected="false" data-img="auditoria" data-cap="Auditoria: quem fez o quê, quando e de onde — com filtro e limpeza por período.">Auditoria</button>
+    </div>
+    <div class="browser" id="galleryFrame">
+      <div class="bar"><i></i><i></i><i></i><span>https://painel.suaempresa.com.br</span></div>
+      <img id="galleryImg" src="img/aplicacoes.jpg" alt="Lista de aplicações do Server Manager" width="1600" height="1000">
+    </div>
+    <p class="caption" id="galleryCap">Aplicações: status, health check, porta, CPU, memória e uptime de cada uma — com parar e reiniciar a um clique.</p>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="wrap split">
+    <div class="text">
+      <div class="eyebrow">Do zero ao ar</div>
+      <h2>Publicar uma aplicação leva minutos</h2>
+      <p class="sub">O assistente guia cada etapa e confere o pacote antes de publicar — inclusive se o WAR é compatível com a versão do Tomcat.</p>
+      <ul class="checks">
+        <li><b>Envie o pacote ou conecte o Git</b> — a cada push na branch, uma nova versão é publicada.</li>
+        <li><b>Endereço com HTTPS</b> — informe o domínio e o certificado é emitido automaticamente.</li>
+        <li><b>Rollback em um clique</b> — as versões anteriores ficam guardadas.</li>
+        <li><b>Modelos da empresa</b> — padronize como as aplicações são criadas.</li>
+      </ul>
+    </div>
+    <div class="browser"><div class="bar"><i></i><i></i><i></i></div><img src="img/publicar.jpg" alt="Assistente de publicação do Server Manager" loading="lazy" width="1600" height="1000"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split rev">
+    <div class="text">
+      <div class="eyebrow">Tranquilidade</div>
+      <h2>Você fica sabendo antes do cliente</h2>
+      <p class="sub">O Server Manager acompanha cada aplicação o tempo todo e age sozinho quando algo sai do normal.</p>
+      <ul class="checks">
+        <li><b>Reinício automático</b> quando o processo cai, com limite de tentativas.</li>
+        <li><b>Alertas</b> de aplicação fora do ar, CPU, memória e disco altos, certificado e Caddy.</li>
+        <li><b>Histórico</b> de mudanças de estado, reinícios, alertas e deploys.</li>
+        <li><b>Logs</b> de cada aplicação direto no navegador.</li>
+      </ul>
+    </div>
+    <div class="browser"><div class="bar"><i></i><i></i><i></i></div><img src="img/health.jpg" alt="Health checks das aplicações" loading="lazy" width="1600" height="1000"></div>
+  </div>
+</section>
+
+<section class="maker" id="maker">
+  <div class="wrap center">
+    <div class="eyebrow" style="color:#7fb2ff">Softwell Maker</div>
+    <h2>Feito também para quem trabalha com Maker</h2>
+    <p class="sub">Ambientes Webrun isolados no mesmo servidor, cada um com seu Tomcat, seu Java e sua pasta de sistemas. Publique .war, .jar ou .wfre e o Server Manager confere a compatibilidade antes.</p>
+    <div class="profiles" style="text-align:left">
+      <div class="profile"><h3>Maker Studio</h3><div class="tech">Tomcat 8.5 · Java 8</div><p>Mantenha os sistemas legados no ar com a mesma gestão, monitoramento e HTTPS dos sistemas novos.</p></div>
+      <div class="profile"><h3>Maker 5</h3><div class="tech">Tomcat 9 · Java 8 a 11</div><p>Webrun 5 com instância própria, publicação de sistemas e conexão de banco por ambiente.</p></div>
+      <div class="profile"><h3>Maker AI</h3><div class="tech">Tomcat 11 · Java 17+</div><p>WebrunAI (Jakarta EE) pronto para os sistemas da nova geração do Maker.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="wrap center">
+    <div class="eyebrow">Como começar</div>
+    <h2>Instalação simples, no seu servidor</h2>
+    <div class="steps" style="text-align:left">
+      <div class="step"><h3>Instale</h3><p>Um instalador para Windows Server. O Node.js só é instalado se ainda não existir.</p></div>
+      <div class="step"><h3>Configure</h3><p>O assistente inicial cria o administrador, nomeia o servidor e pode instalar o Caddy.</p></div>
+      <div class="step"><h3>Publique</h3><p>Cadastre suas aplicações ou publique novas pelo assistente.</p></div>
+      <div class="step"><h3>Acompanhe</h3><p>Monitoramento, alertas, backups e atualizações a partir do navegador.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="perguntas">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow">Perguntas frequentes</div>
+      <h2>Dúvidas comuns</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Em quais sistemas o Server Manager funciona?</summary><p>Em Windows Server. Ele é instalado como Serviço do Windows e o painel é acessado pelo navegador, de qualquer computador autorizado.</p></details>
+      <details><summary>Preciso mudar as aplicações que já estão no servidor?</summary><p>Não. Você pode cadastrar aplicações existentes, monitorar serviços externos por HTTP/TCP e usar o Caddy que já estiver instalado (modo externo), sem mexer no que funciona.</p></details>
+      <details><summary>O que acontece com as aplicações quando o Server Manager é atualizado?</summary><p>Elas continuam rodando. A atualização é oferecida no painel, só é instalada com a aprovação do administrador e o instalador é verificado (SHA-256) antes de rodar. Os dados e configurações são preservados.</p></details>
+      <details><summary>É seguro expor o painel na internet?</summary><p>O painel tem 2FA, perfis de acesso, restrição por redes autorizadas e auditoria. A Central de Segurança indica o que ajustar. Também é possível manter o painel acessível só pela rede interna ou VPN.</p></details>
+      <details><summary>Funciona com sistemas feitos no Maker?</summary><p>Sim: Maker Studio, Maker 5 e Maker AI, cada um com seu ambiente Webrun isolado, Tomcat e Java compatíveis.</p></details>
+      <details><summary>Consigo gerenciar mais de um servidor?</summary><p>Sim. Um Server Manager central pode gerenciar outros servidores com tokens de acesso, sempre com as permissões do usuário logado e registro na auditoria.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Seu servidor, sem complicação</h2>
+    <p class="sub">Fale com a API2Dev e veja o Server Manager funcionando com as suas aplicações.</p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="mailto:suporte@api2dev.com.br?subject=Server%20Manager%20-%20demonstra%C3%A7%C3%A3o">Solicitar demonstração</a>
+      <a class="btn btn-ghost" href="https://api2dev.com.br">api2dev.com.br</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> API2Dev · Desenvolvido por Hendell A. Cardoso</span>
+    <span><a href="mailto:suporte@api2dev.com.br">suporte@api2dev.com.br</a> · <a href="https://api2dev.com.br">api2dev.com.br</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Imagem ampliada"><img alt=""></div>
+
+<script>
+  (function () {
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var tabs = document.querySelectorAll('.tab');
+    var img = document.getElementById('galleryImg');
+    var cap = document.getElementById('galleryCap');
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
+        img.src = 'img/' + t.dataset.img + '.jpg';
+        img.alt = t.textContent;
+        cap.textContent = t.dataset.cap;
+      });
+    });
+    // pré-carrega as telas da galeria
+    tabs.forEach(function (t) { var i = new Image(); i.src = 'img/' + t.dataset.img + '.jpg'; });
+    var lb = document.getElementById('lightbox');
+    var lbImg = lb.querySelector('img');
+    document.querySelectorAll('.browser img').forEach(function (el) {
+      el.style.cursor = 'zoom-in';
+      el.addEventListener('click', function () { lbImg.src = el.src; lbImg.alt = el.alt; lb.classList.add('open'); });
+    });
+    lb.addEventListener('click', function () { lb.classList.remove('open'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+  })();
+</script>
+</body>
+</html>

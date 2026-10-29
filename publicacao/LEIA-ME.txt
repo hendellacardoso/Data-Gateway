@@ -1,0 +1,23 @@
+Data Gateway - página de apresentação (HTML + CSS + JavaScript)
+================================================================
+
+Site estático: não precisa de Node, banco ou servidor especial. Funciona em qualquer
+hospedagem (Caddy file_server, IIS, Apache, Nginx, GitHub Pages) e em qualquer pasta,
+porque todos os caminhos são relativos.
+
+  index.html        a página
+  css/estilo.css    visual
+  js/script.js      menu, guia "Como usar", exemplos de código, galeria e ampliação das telas
+  img/              logotipo, ícone, imagem de compartilhamento
+  img/telas/        prints das telas do sistema
+
+Abrir no computador: dê dois cliques no index.html.
+
+Incluir uma tela nova na galeria:
+  1. copie a imagem (.webp, .png ou .jpg) para img/telas/
+  2. no início do js/script.js, adicione uma linha na lista TELAS, ex.:
+       ['23-nova-tela', 'Legenda da tela'],
+     (se não for .webp, troque a extensão na função src logo abaixo da lista)
+
+Publicar no site atual (api2dev.com.br): copie esta pasta para site\public\
+(ex.: site\public\data-gateway\) e acesse https://api2dev.com.br/data-gateway/
